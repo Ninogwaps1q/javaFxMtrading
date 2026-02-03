@@ -41,6 +41,8 @@ public class cashierAbout implements Initializable {
     private Label aboutBtn;
     @FXML
     private Label homeBtn;
+    @FXML
+    private Label profileHandleBtn;
 
     /**
      * Initializes the controller class.
@@ -80,6 +82,17 @@ public class cashierAbout implements Initializable {
     @FXML
     private void homeHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/CashierFXML/CashierDashboard.fxml"));
+        Scene sc = new Scene(root, 800, 500);
+        sc.getStylesheets().add(getClass().getResource("/css/cashier.css").toExternalForm());
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(sc);
+        stage.show();
+    }
+
+    @FXML
+    private void profileHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/CashierFXML/CashierProfile.fxml"));
         Scene sc = new Scene(root, 800, 500);
         sc.getStylesheets().add(getClass().getResource("/css/cashier.css").toExternalForm());
 

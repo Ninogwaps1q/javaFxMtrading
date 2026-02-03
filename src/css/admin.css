@@ -115,3 +115,16 @@
     -fx-border-color: #e84393;
     -fx-background-color: #ffffff;
 }
+#nameLabel{
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+#emailLabel{
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+#roleLabel{
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
