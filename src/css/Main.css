@@ -1,0 +1,94 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #f48fb1, #d63384, #f48fb1);
+}
+
+/* VBox container for forms */
+.form-container {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.5, 0, 3);
+}
+
+/* Titles */
+.label-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FF1493;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.5, 0, 1);
+}
+
+.label-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #FF69B4;
+}
+
+.label-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #d63384;
+}
+
+/* TextFields and PasswordFields */
+.text-field, .password-field, TextField, PasswordField {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #FFB6C1;
+    -fx-background-color: #FFF0F5;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.5, 0, 1);
+    -fx-transition: all 0.2s ease;
+}
+
+/* TextFields and PasswordFields hover effect */
+.text-field:hover, .password-field:hover, TextField:hover, PasswordField:hover {
+    -fx-border-color: #FF1493;
+    -fx-background-color: #FFE0F0;
+}
+
+/* Buttons - generic styling for all buttons */
+.button, Button {
+    -fx-background-color: #FF69B4;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-padding: 8 15 8 15;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.5, 0, 2);
+    -fx-transition: all 0.2s ease; /* smooth transition for hover */
+}
+
+/* Hover effect for all buttons */
+.button:hover, Button:hover {
+    -fx-background-color: #FF1493;  /* darker pink */
+    -fx-scale-x: 1.05;              /* subtle enlarge */
+    -fx-scale-y: 1.05;
+}
+
+/* Hero Section */
+.hero {
+    -fx-alignment: center;
+    -fx-spacing: 15;
+}
+
+/* Logo Image */
+.logo {
+    -fx-fit-width: 180;
+    -fx-fit-height: 180;
+}
+
+/* Links */
+.label-link {
+    -fx-text-fill: #FF1493;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease;
+}
+
+/* Link hover effect */
+.label-link:hover {
+    -fx-underline: true;
+    -fx-text-fill: #FF1493;
+}

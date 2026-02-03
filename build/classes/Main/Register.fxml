@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: linear-gradient(#f48fb1, #d63384,#f48fb1);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.RegisterController">
+
+    <VBox alignment="CENTER" layoutX="250" layoutY="50" prefHeight="425.0" prefWidth="300" spacing="20" style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10,0.5,0,3);">
+
+        <!-- Title -->
+        <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #FF1493;" text="Create Account" />
+
+        <!-- Name -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <ImageView fitHeight="24" fitWidth="24">
+                <image>
+                    <Image url="@../image/icons_user.png" />
+                </image>
+            </ImageView>
+            <TextField fx:id="nameInput" prefWidth="200" promptText="Full Name" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #FFB6C1; -fx-background-color: #FFF0F5; -fx-padding: 8 12 8 12;" />
+        </HBox>
+
+        <!-- Email -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <ImageView fitHeight="24" fitWidth="24">
+                <image>
+                    <Image url="@../image/email_icon.png" />
+                </image>
+            </ImageView>
+            <TextField fx:id="emailInput" prefWidth="200" promptText="Email" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #FFB6C1; -fx-background-color: #FFF0F5; -fx-padding: 8 12 8 12;" />
+        </HBox>
+
+        <!-- Username -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <ImageView fitHeight="24" fitWidth="24">
+                <image>
+                    <Image url="@../image/icons_user.png" />
+                </image>
+            </ImageView>
+            <TextField fx:id="unameInput" prefWidth="200" promptText="Username" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #FFB6C1; -fx-background-color: #FFF0F5; -fx-padding: 8 12 8 12;" />
+        </HBox>
+
+        <!-- Password -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <ImageView fitHeight="24" fitWidth="24">
+                <image>
+                    <Image url="@../image/password_icon.png" />
+                </image>
+            </ImageView>
+            <TextField fx:id="passInput" prefWidth="200" promptText="Password" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #FFB6C1; -fx-background-color: #FFF0F5; -fx-padding: 8 12 8 12;" />
+        </HBox>
+
+        <!-- Register Button -->
+        <Button fx:id="registerBtn" onAction="#registerButtonAction" prefWidth="250" style="-fx-background-color: #FF69B4; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;" text="Register" />
+
+        <!-- Go to Login -->
+        <Label fx:id="goLogin" onMouseClicked="#handleGoLoginClick" style="-fx-text-fill: #FF1493; -fx-font-weight: bold;" text="Already have account? Login" />
+    </VBox>
+</AnchorPane>

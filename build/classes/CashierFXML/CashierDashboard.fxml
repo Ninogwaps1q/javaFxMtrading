@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/cashier.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CashierDashboard">
+
+    <!-- Top Navigation Bar -->
+    <HBox fx:id="navPanel" prefHeight="80" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+        <children>
+
+            <!-- Logo -->
+            <ImageView fx:id="navLogo" fitHeight="60" fitWidth="60.0" preserveRatio="true">
+                <image>
+                    <Image url="@../image/image6.jpg" />
+                </image>
+            </ImageView>
+         <Label styleClass="nav-item" text="Melynal Trading" />
+
+            <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home">
+            <padding>
+               <Insets left="50.0" />
+            </padding></Label>
+            <Label styleClass="nav-item" text="Products" />
+            <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" styleClass="nav-item" text="About">
+            <padding>
+               <Insets right="80.0" />
+            </padding></Label>
+         <Label fx:id="profileBtn" layoutX="422.0" layoutY="41.0" onMouseClicked="#profileHandlebtn" styleClass="nav-item" text="Profile" />
+         <Label fx:id="logoutBtn" layoutX="488.0" layoutY="41.0" onMouseClicked="#handleLogoutBtn" styleClass="nav-item" text="Logout" />
+
+        </children>
+    </HBox>
+
+    <!-- Hero Section -->
+    <VBox fx:id="hero" alignment="CENTER" spacing="15" style="-fx-background-color: linear-gradient(#f48fb1, #d63384,#f48fb1);" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="80">
+
+        <!-- Center Big Logo -->
+        <ImageView fx:id="heroLogo" fitHeight="180" fitWidth="180" preserveRatio="true">
+            <image>
+                <Image url="@../image/image6.jpg" />
+            </image>
+        </ImageView>
+
+        <Label styleClass="title" text="Welcome to Melynal Trading" />
+        <Label styleClass="subtitle" text="Be Beautiful, Be Pocketful, Be A Blessing" />
+        <Label styleClass="description" text="Your trusted source for quality cosmetics and beauty products since 2017" />
+        <Button styleClass="shop-btn" text="Shop Now" />
+    </VBox>
+
+</AnchorPane>
