@@ -92,3 +92,14 @@
     -fx-underline: true;
     -fx-text-fill: #FF1493;
 }
+.typeCombo{
+    -fx-background-color: #FF69B4;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-padding: 8 15 8 15;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.5, 0, 2);
+    -fx-transition: all 0.2s ease;
+}

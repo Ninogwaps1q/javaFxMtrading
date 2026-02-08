@@ -1,58 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/cashier.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CashierDashboard">
-
-    <!-- Top Navigation Bar -->
-    <HBox fx:id="navPanel" prefHeight="80" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-
-        <children>
-
-            <!-- Logo -->
-            <ImageView fx:id="navLogo" fitHeight="60" fitWidth="60.0" preserveRatio="true">
-                <image>
-                    <Image url="@../image/image6.jpg" />
-                </image>
+<AnchorPane prefHeight="500.0" prefWidth="737.0" stylesheets="@../css/cashier.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cashierController.cashierDashboard">
+   <children>
+      <AnchorPane fx:id="AnchorPane" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/admin.css">
+         <children>
+            <VBox fx:id="panel" layoutX="14.0" layoutY="26.0" prefHeight="500.0" prefWidth="206.0" spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-9.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fx:id="logo" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/image6.jpg" />
+                     </image>
+                     <VBox.margin>
+                        <Insets left="22.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <Label fx:id="textPanel" text="Cashier Panel">
+                     <VBox.margin>
+                        <Insets bottom="20.0" left="50.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Button fx:id="dashboard" onAction="#dashboardButtonAction" styleClass="nav-btn" text="Dashboard">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-dashboard-24.png" />
+                           </image>
+                           <viewport>
+                              <Rectangle2D />
+                           </viewport>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="35.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="productBtn" onAction="#productButtonAction" styleClass="nav-btn" text="Order">
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-add-shopping-cart-32.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="35.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="salesBtn" onAction="#orderButtonAction" onMouseClicked="#saleHandleBtn" styleClass="nav-btn" text="Sales Product">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-sales-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="35.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="logoutBtn" onAction="#logoutButtonAction" styleClass="nav-btn1" text="Logout">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-logout-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="35.0" top="10.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+            <Label layoutX="240.0" layoutY="25.0" text="Dashboard">
+               <font>
+                  <Font name="Times New Roman Bold" size="30.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="userprofile" fitHeight="120.0" fitWidth="120.0" layoutX="240.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/icons8-profile-50.png" />
+               </image>
             </ImageView>
-         <Label styleClass="nav-item" text="Melynal Trading" />
-
-            <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home">
-            <padding>
-               <Insets left="50.0" />
-            </padding></Label>
-            <Label styleClass="nav-item" text="Products" />
-            <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" styleClass="nav-item" text="About">
-            <padding>
-               <Insets right="80.0" />
-            </padding></Label>
-         <Label fx:id="profileBtn" layoutX="422.0" layoutY="41.0" onMouseClicked="#profileHandlebtn" styleClass="nav-item" text="Profile" />
-         <Label fx:id="logoutBtn" layoutX="488.0" layoutY="41.0" onMouseClicked="#handleLogoutBtn" styleClass="nav-item" text="Logout" />
-
-        </children>
-    </HBox>
-
-    <!-- Hero Section -->
-    <VBox fx:id="hero" alignment="CENTER" spacing="15" style="-fx-background-color: linear-gradient(#f48fb1, #d63384,#f48fb1);" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="80">
-
-        <!-- Center Big Logo -->
-        <ImageView fx:id="heroLogo" fitHeight="180" fitWidth="180" preserveRatio="true">
-            <image>
-                <Image url="@../image/image6.jpg" />
-            </image>
-        </ImageView>
-
-        <Label styleClass="title" text="Welcome to Melynal Trading" />
-        <Label styleClass="subtitle" text="Be Beautiful, Be Pocketful, Be A Blessing" />
-        <Label styleClass="description" text="Your trusted source for quality cosmetics and beauty products since 2017" />
-        <Button styleClass="shop-btn" text="Shop Now" />
-    </VBox>
+            <Label fx:id="nameLabel" layoutX="380.0" layoutY="95.0" text="Name">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="emailLabel" layoutX="380.0" layoutY="125.0" text="Email">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="roleLabel" layoutX="380.0" layoutY="155.0" text="Role">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
 
 </AnchorPane>

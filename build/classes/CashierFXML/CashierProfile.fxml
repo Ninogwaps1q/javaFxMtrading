@@ -52,7 +52,7 @@
                     <!-- PROFILE IMAGE -->
                     <ImageView fx:id="profileImage" fitHeight="140" fitWidth="140" preserveRatio="true" style="-fx-background-radius: 70px; -fx-border-radius: 70px; -fx-border-color: white; -fx-border-width: 4;">
                         <image>
-                            <Image url="@../image/icons8-profile-50.png" />
+                            <Image url="@../image/icons8-profile-100%20(1).png" />
                         </image>
                     </ImageView>
 

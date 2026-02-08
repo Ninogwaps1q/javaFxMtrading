@@ -1,7 +1,7 @@
 
 package config;
 
-import Controller.AdminSession;
+import AdminController.AdminSession;
 import java.security.MessageDigest;
 import java.sql.*;
 import java.util.Properties;

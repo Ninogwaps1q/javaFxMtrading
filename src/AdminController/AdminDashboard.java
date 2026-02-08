@@ -1,4 +1,4 @@
-package Controller;
+package AdminController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
@@ -100,6 +101,16 @@ public class AdminDashboard implements Initializable {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminProduct.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 800, 500));
+        stage.show();
+    }
+
+    @FXML
+    private void saleHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminSale.fxml"));
+        Scene sc = new Scene(root, 800, 500);
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(sc);
         stage.show();
     }
 }

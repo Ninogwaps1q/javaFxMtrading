@@ -1,4 +1,4 @@
-package Controller;
+package AdminController;
 
 public class AdminSession {
 

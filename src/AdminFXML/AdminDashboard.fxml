@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="AnchorPane" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.AdminDashboard">
+<AnchorPane fx:id="AnchorPane" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.AdminDashboard">
 
     <children>
 
@@ -57,7 +57,7 @@
             <VBox.margin>
                <Insets left="35.0" top="5.0" />
             </VBox.margin></Button>
-            <Button fx:id="salesBtn" onAction="#orderButtonAction" styleClass="nav-btn" text="Sales">
+            <Button fx:id="salesBtn" onAction="#orderButtonAction" onMouseClicked="#saleHandleBtn" styleClass="nav-btn" text="Sales">
             <graphic>
                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                   <image>

@@ -85,8 +85,10 @@ public class LoginController implements Initializable {
             String fxmlFile = "";
             if ("Admin".equalsIgnoreCase(role)) {
                 fxmlFile = "/AdminFXML/AdminDashboard.fxml";
-            } else {
+            } else if ("Cashier".equalsIgnoreCase(role)){
                 fxmlFile = "/CashierFXML/CashierDashboard.fxml";
+            }else{
+                fxmlFile = "/UserFXML/UserDashboard.fxml";
             }
 
             try {
