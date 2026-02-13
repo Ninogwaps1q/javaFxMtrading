@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminSale">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminSale">
    <children>
       <AnchorPane fx:id="AnchorPane" layoutX="-6.0" prefHeight="510.0" prefWidth="816.0" stylesheets="@../css/admin.css">
          <children>
-            <VBox fx:id="panel" prefHeight="510.0" prefWidth="226.0" spacing="10" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0">
+            <VBox fx:id="panel" prefHeight="600.0" prefWidth="226.0" spacing="10" AnchorPane.bottomAnchor="-90.0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0">
                <children>
                   <ImageView fx:id="logo" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                      <image>

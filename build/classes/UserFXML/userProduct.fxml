@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/user.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UserController.userProduct">
+
+    <children>
+
+        <!-- NAV BAR (DO NOT CHANGE) -->
+        <HBox fx:id="navPanel" alignment="CENTER_LEFT" prefHeight="80" spacing="15" style="-fx-background-color: white; -fx-padding: 10;" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <children>
+                <ImageView fx:id="navLogo" fitHeight="60" fitWidth="60" preserveRatio="true">
+                    <image><Image url="@../image/image6.jpg" /></image>
+                    <HBox.margin><Insets left="20" /></HBox.margin>
+                </ImageView>
+
+                <Label styleClass="nav-item" text="Melynal Trading" />
+
+                <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home">
+                    <padding><Insets left="50" /></padding>
+                </Label>
+
+                <Label fx:id="productBtn" onMouseClicked="#productHandleBtn" styleClass="nav-item" text="Products" />
+                <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" styleClass="nav-item" text="About">
+                    <padding><Insets right="60" /></padding>
+                </Label>
+                <Label fx:id="profileBtn" onMouseClicked="#profileHandlebtn" styleClass="nav-item" text="Profile" />
+                <Label fx:id="logoutBtn" onMouseClicked="#handleLogoutBtn" styleClass="nav-item" text="Logout" />
+
+                <!-- ✅ Cart button with badge (Shopee style) -->
+                <StackPane>
+                    <Label fx:id="cartBadge" style="-fx-background-color:red; -fx-text-fill:white; -fx-font-weight:bold; -fx-padding:2 6 2 6; -fx-background-radius:12;" text="0" visible="false">
+                        <StackPane.margin>
+                            <Insets right="-10" top="-18" />
+                        </StackPane.margin>
+                        <StackPane.alignment>TOP_RIGHT</StackPane.alignment>
+                    </Label>
+                </StackPane>
+
+            </children>
+        </HBox>
+
+        <!-- BODY -->
+        <SplitPane dividerPositions="0.68" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="80">
+
+            <!-- LEFT: Products -->
+            <VBox spacing="10" style="-fx-padding: 12; -fx-background-color: linear-gradient(#f48fb1,#d63384,#f48fb1);">
+
+                <Label style="-fx-font-size:22px; -fx-font-weight:bold; -fx-text-fill:white;" text="Products" />
+
+                <!-- ✅ SEARCH BAR -->
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <TextField fx:id="searchField" prefWidth="320" promptText="Search product..." style="-fx-background-radius:12; -fx-border-radius:12; -fx-border-color: rgba(255,255,255,0.35); -fx-background-color: rgba(255,255,255,0.18); -fx-text-fill: white; -fx-prompt-text-fill: rgba(255,255,255,0.7);" />
+
+                    <Button onAction="#clearSearch" style="-fx-background-color:#ff1493; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:12;" text="Clear" />
+                </HBox>
+
+                <ScrollPane fitToWidth="true" style="-fx-background-color:transparent;">
+                    <content>
+                        <FlowPane fx:id="productFlow" hgap="12" prefWrapLength="560" style="-fx-padding:10;" vgap="12" />
+                    </content>
+                </ScrollPane>
+            </VBox>
+
+            <!-- RIGHT: Cart panel -->
+            <VBox spacing="8" style="-fx-padding: 12; -fx-background-color: white;">
+                <Label style="-fx-font-size:18px; -fx-font-weight:bold;" text="My Cart" />
+
+                <TableView fx:id="cartTable" prefHeight="340">
+                    <columns>
+                        <TableColumn fx:id="cImage" prefWidth="60" text="Img" />
+                        <TableColumn fx:id="cName" prefWidth="150" text="Item" />
+                        <TableColumn fx:id="cPrice" prefWidth="75" text="Price" />
+                        <TableColumn fx:id="cQty" prefWidth="110" text="Qty" />
+                        <TableColumn fx:id="cSubtotal" prefWidth="95" text="Subtotal" />
+                    </columns>
+                </TableView>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Label style="-fx-font-weight:bold;" text="Total:" />
+                    <Label fx:id="totalLabel" style="-fx-font-weight:bold;" text="₱0.00" />
+                </HBox>
+
+                <HBox spacing="10">
+                    <Button onAction="#removeSelected" prefWidth="150" text="Remove Selected" />
+                    <Button onAction="#checkout" prefWidth="140" style="-fx-background-color:#ff1493; -fx-text-fill:white; -fx-font-weight:bold;" text="Checkout" />
+                </HBox>
+
+                <Label fx:id="cartMsg" style="-fx-text-fill:#d63384;" text="" />
+            </VBox>
+
+        </SplitPane>
+    </children>
+</AnchorPane>

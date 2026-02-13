@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package UserController;
 
 import java.io.IOException;
@@ -19,13 +15,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-/**
- * FXML Controller class
- *
- * @author Nino
- */
+
 public class userDashboard implements Initializable {
 
     @FXML
@@ -50,11 +43,22 @@ public class userDashboard implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-
+        makeCircle(navLogo);
+        makeCircle(heroLogo);
+    } 
+    
+    private void makeCircle(ImageView imageView) {
+        double radius = Math.min(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
+        Circle clip = new Circle(radius, radius, radius);
+        imageView.setClip(clip);
+    }
+    
     @FXML
-    private void homeHandleBtn(MouseEvent event) {
+    private void homeHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserDashboard.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
 
     @FXML
@@ -62,15 +66,37 @@ public class userDashboard implements Initializable {
     }
 
     @FXML
-    private void profileHandlebtn(MouseEvent event) {
+    private void profileHandlebtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserProfile.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
+    
 
     @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 800, 500));
+        stage.setScene(new Scene(root, 1000, 600));
         stage.show();
     }
+
+    @FXML
+    private void productHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userProduct.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
+    @FXML
+    private void shopHandlebtn(MouseEvent event) throws IOException {
+         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userProduct.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
     
 }

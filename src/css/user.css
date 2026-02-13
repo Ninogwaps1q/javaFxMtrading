@@ -1,0 +1,293 @@
+/* ================= GLOBAL STYLES ================= */
+.root {
+    -fx-font-family: "Segoe UI", "Tahoma", sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #f48fb1, #d63384, #f48fb1);
+}
+
+/* Smooth default text */
+.label {
+    -fx-text-fill: #222;
+}
+
+/* ================= APP SURFACE / PANELS ================= */
+/* Use this by adding styleClass="surface" in FXML if you want,
+   but it won't break if you don't. */
+.surface {
+    -fx-background-color: rgba(255,255,255,0.92);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(0,0,0,0.06);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0, 0, 6);
+}
+
+/* ================= PROFILE IMAGE ================= */
+#profileImage {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 14, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+#profileImage:hover {
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.40), 18, 0, 0, 6);
+}
+
+/* ================= INPUTS ================= */
+.text-field, .text-area, .password-field {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(214, 51, 132, 0.55);
+    -fx-border-width: 1;
+    -fx-padding: 10 12 10 12;
+    -fx-font-size: 13px;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+}
+
+.text-field:focused, .text-area:focused, .password-field:focused {
+    -fx-border-color: rgba(255, 20, 147, 0.95);
+    -fx-effect: dropshadow(gaussian, rgba(255, 20, 147, 0.25), 12, 0, 0, 3);
+}
+
+/* ================= COMBOBOX ================= */
+.combo-box {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(214, 51, 132, 0.55);
+    -fx-background-color: white;
+    -fx-padding: 4 8 4 8;
+}
+.combo-box:focused {
+    -fx-border-color: rgba(255, 20, 147, 0.95);
+    -fx-effect: dropshadow(gaussian, rgba(255, 20, 147, 0.25), 12, 0, 0, 3);
+}
+
+/* ================= BUTTONS (REAL APP STYLE) ================= */
+.button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 10 16 10 16;
+    -fx-font-size: 13px;
+    -fx-background-color: #e91e63;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 10, 0, 0, 3);
+}
+
+.button:hover {
+    -fx-background-color: #d81b60;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 14, 0, 0, 4);
+    -fx-translate-y: -1;
+}
+
+.button:pressed {
+    -fx-translate-y: 0;
+    -fx-opacity: 0.95;
+}
+
+/* Optional utility classes (use in FXML if you want) */
+.btn-primary {
+    -fx-background-color: #ff1493;
+    -fx-text-fill: white;
+}
+.btn-primary:hover { -fx-background-color: #e21384; }
+
+.btn-neutral {
+    -fx-background-color: #f3f4f6;
+    -fx-text-fill: #222;
+    -fx-effect: none;
+    -fx-border-color: rgba(0,0,0,0.08);
+    -fx-border-width: 1;
+}
+.btn-neutral:hover { -fx-background-color: #e9eaee; }
+
+.btn-danger {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+}
+.btn-danger:hover { -fx-background-color: #dc2626; }
+
+/* ================= TAB PANE ================= */
+.tab-pane {
+    -fx-background-color: rgba(255,255,255,0.95);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(0,0,0,0.06);
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 16, 0, 0, 5);
+}
+
+.tab-pane .tab-header-area {
+    -fx-padding: 6 6 0 6;
+}
+
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 8 14 8 14;
+}
+
+.tab-pane .tab-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #d63384;
+    -fx-font-size: 13px;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #ff1493;
+}
+
+/* ================= HERO SECTION ================= */
+#hero {
+    -fx-padding: 50 20 50 20;
+    -fx-alignment: center;
+}
+
+#heroLogo {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 18, 0, 0, 6);
+}
+
+#heroLogo:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+.title {
+    -fx-font-size: 32px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 8, 0, 0, 2);
+}
+
+.subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-weight: 600;
+}
+
+.description {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255,255,255,0.86);
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-max-width: 560px;
+}
+
+/* ================= SHOP BUTTON ================= */
+.shop-btn {
+    -fx-background-color: #ff1493;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 26 12 26;
+    -fx-background-radius: 14;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 14, 0, 0, 4);
+}
+.shop-btn:hover {
+    -fx-background-color: #e21384;
+    -fx-translate-y: -1;
+}
+
+/* ================= TABLE VIEW (CART) ================= */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(0,0,0,0.07);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 16, 0, 0, 4);
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #fafafa;
+    -fx-background-radius: 14 14 0 0;
+    -fx-border-color: rgba(0,0,0,0.07);
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #111;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent rgba(0,0,0,0.06) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: rgba(0,0,0,0.03);
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: rgba(255, 20, 147, 0.10);
+}
+
+.table-cell {
+    -fx-padding: 10 10 10 10;
+    -fx-text-fill: #222;
+}
+
+/* ================= SCROLLPANE CLEAN ================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ================= BADGE ================= */
+#cartBadge {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 2 7 2 7;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 10, 0, 0, 2);
+}
+
+/* ================= LAYOUT HELPERS ================= */
+VBox, HBox {
+    -fx-spacing: 12;
+}
+
+/* ======================================================
+   NAVBAR: DO NOT CHANGE
+   (Kept exactly as your original — NO modifications below)
+   ====================================================== */
+#navPanel {
+    -fx-background-color: white;
+    -fx-padding: 10 40 10 40;
+    -fx-spacing: 25;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);
+}
+
+/* Navigation text */
+.nav-item {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-cursor: hand;
+}
+
+.nav-item:hover {
+    -fx-text-fill: #e64b9a;
+}
+
+/* ================= PRODUCT DETAILS MODAL ================= */
+.details-modal {
+    -fx-background-color: linear-gradient(to bottom, #f48fb1, #d63384);
+}
+
+.details-panel {
+    -fx-background-color: rgba(255,255,255,0.96);
+    -fx-background-radius: 20;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0, 0, 8);
+}

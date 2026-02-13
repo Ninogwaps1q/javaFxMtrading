@@ -61,7 +61,7 @@ public class adminSale implements Initializable {
     @FXML
     private void dashboardButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/AdminDashboard.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000, 600);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);
@@ -71,7 +71,7 @@ public class adminSale implements Initializable {
     @FXML
     private void productButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminProduct.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000, 600);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);
@@ -85,7 +85,7 @@ public class adminSale implements Initializable {
     @FXML
     private void userButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminUser.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000, 600);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);
@@ -95,7 +95,7 @@ public class adminSale implements Initializable {
     @FXML
     private void logoutButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000, 600);
         sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -112,7 +112,7 @@ public class adminSale implements Initializable {
     @FXML
     private void saleHandlleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminSale.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000, 600);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);

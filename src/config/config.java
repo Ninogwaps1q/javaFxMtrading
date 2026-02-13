@@ -1,7 +1,7 @@
-
 package config;
 
 import AdminController.AdminSession;
+import UserController.UserSession;
 import java.security.MessageDigest;
 import java.sql.*;
 import java.util.Properties;
@@ -14,19 +14,20 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class config {
-    
+
+    // ✅ STATIC CONNECT (use everywhere: config.connectDB())
     public static Connection connectDB() {
         Connection con = null;
         try {
-            Class.forName("org.sqlite.JDBC"); // Load the SQLite JDBC driver
-            con = DriverManager.getConnection("jdbc:sqlite:data.db"); // Establish connection
+            Class.forName("org.sqlite.JDBC");
+            con = DriverManager.getConnection("jdbc:sqlite:data.db"); // <-- your db file
             System.out.println("Connection Successful");
         } catch (Exception e) {
             System.out.println("Connection Failed: " + e);
         }
         return con;
     }
-    
+
     public void addRecord(String sql, Object... values) {
         try (Connection conn = connectDB();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -42,57 +43,61 @@ public class config {
         }
     }
 
+    // ✅ UPDATED LOGIN: saves USER session for User, AdminSession for Admin/Cashier
     public String login(String loginInput, String pass) {
-    String role = null;
+        String role = null;
 
-    String sql = "SELECT u_name, u_email, u_role, u_status " +
-                 "FROM tbl_acc " +
-                 "WHERE (u_uname = ? OR u_email = ?) AND u_password = ?";
+        String sql = "SELECT u_id, u_name, u_email, u_role, u_status " +
+                     "FROM tbl_acc " +
+                     "WHERE (u_uname = ? OR u_email = ?) AND u_password = ?";
 
-    String hash = hashPassword(pass);
+        String hash = hashPassword(pass);
 
-    try (Connection conn = this.connectDB();
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = config.connectDB();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        pstmt.setString(1, loginInput);
-        pstmt.setString(2, loginInput);
-        pstmt.setString(3, hash);
+            pstmt.setString(1, loginInput);
+            pstmt.setString(2, loginInput);
+            pstmt.setString(3, hash);
 
-        try (ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+
+                if (!rs.next()) {
+                    System.out.println("Invalid credentials.");
+                    return null;
+                }
 
                 String status = rs.getString("u_status");
-
-                if ("Approved".equalsIgnoreCase(status)) {
-
-                    String name  = rs.getString("u_name");
-                    String email = rs.getString("u_email");
-                    role         = rs.getString("u_role");
-
-                    // ✅ SAVE LOGGED-IN USER
-                    AdminSession.setAdmin(name, email, role);
-
-                    System.out.println("Login successful!");
-                    System.out.println(name + " | " + email + " | " + role);
-
-                } else {
+                if (!"Approved".equalsIgnoreCase(status)) {
                     System.out.println("Account pending approval.");
                     return null;
                 }
 
-            } else {
-                System.out.println("Invalid credentials.");
+                int id = rs.getInt("u_id");
+                String name = rs.getString("u_name");
+                String email = rs.getString("u_email");
+                role = rs.getString("u_role");
+
+                // ✅ clear old sessions first (avoid mix)
+                UserSession.clear();
+                AdminSession.clear();
+
+                if ("User".equalsIgnoreCase(role)) {
+                    UserSession.set(id, name, email);
+                } else {
+                    AdminSession.setAdmin(name, email, role);
+                }
+
+                System.out.println("Login successful: " + name + " | " + email + " | " + role);
             }
+
+        } catch (SQLException e) {
+            System.out.println("Login error: " + e.getMessage());
         }
 
-    } catch (SQLException e) {
-        System.out.println("Login error: " + e.getMessage());
+        return role;
     }
 
-    return role;
-}
-
-    
     public boolean recordExists(String sql, Object... values) {
         try (Connection conn = connectDB();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -109,22 +114,20 @@ public class config {
         }
         return false;
     }
-    
+
     public String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashedBytes = md.digest(password.getBytes("UTF-8"));
             StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
+            for (byte b : hashedBytes) sb.append(String.format("%02x", b));
             return sb.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-    
+
     public void updatePassword(String email, String hashedPassword) {
         String sql = "UPDATE tbl_acc SET u_password = ? WHERE u_email = ?";
         try (Connection conn = connectDB();
@@ -136,7 +139,8 @@ public class config {
             e.printStackTrace();
         }
     }
-    
+
+    // ⚠️ Security note: consider moving these to env later
     public void sendEmail(String to, String subject, String body) {
         final String from = "jaycavalidamanabat@gmail.com";
         final String password = "wvdb zgnn sgcb xejz";
@@ -163,7 +167,6 @@ public class config {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // ================== RESET CODE ==================
     public int generateResetCode() {
         return (int)(Math.random() * 900000) + 100000;
     }

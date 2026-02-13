@@ -99,7 +99,7 @@ public class ForgotPasswordController {
             // ================= Redirect to Login.fxml =================
             try {
                 Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
-                Scene sc = new Scene(root, 800, 500);
+                Scene sc = new Scene(root, 1000, 600);
                 sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -121,7 +121,7 @@ public class ForgotPasswordController {
     @FXML
     private void backHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000, 600);
         sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

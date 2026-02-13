@@ -85,7 +85,7 @@ public class cashierDashboard implements Initializable {
     private void logoutButtonAction(ActionEvent event) throws IOException {
        Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 800, 500));
+        stage.setScene(new Scene(root, 1000, 600));
         stage.show();
     }
 

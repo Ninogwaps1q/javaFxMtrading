@@ -46,7 +46,7 @@ public class LoginController implements Initializable {
     @FXML
     private void handleForgotClick(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/ForgotPassword.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000, 600);
         sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -57,7 +57,7 @@ public class LoginController implements Initializable {
     @FXML
     private void handleCreataAcc(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Register.fxml"));
-        Scene sc = new Scene(root, 800, 500);
+        Scene sc = new Scene(root, 1000,600);
         sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -67,7 +67,7 @@ public class LoginController implements Initializable {
 
     @FXML
     private void loginButtonAction(ActionEvent event) {
-        String loginInput = UsernameLogin.getText().trim(); // Can be username or email
+        String loginInput = UsernameLogin.getText().trim();
         String pass = passwordLogin.getText().trim();
 
         config con = new config();
@@ -77,36 +77,35 @@ public class LoginController implements Initializable {
             return;
         }
 
-        // Call updated config.login() that accepts username OR email
         String role = con.login(loginInput, pass);
 
-        if (role != null) {
-            // Login successful → role-based redirection
-            String fxmlFile = "";
-            if ("Admin".equalsIgnoreCase(role)) {
-                fxmlFile = "/AdminFXML/AdminDashboard.fxml";
-            } else if ("Cashier".equalsIgnoreCase(role)){
-                fxmlFile = "/CashierFXML/CashierDashboard.fxml";
-            }else{
-                fxmlFile = "/UserFXML/UserDashboard.fxml";
-            }
+        if (role == null) {
+            showAlert(Alert.AlertType.ERROR, "Login Failed",
+                    "Invalid username/email or password, or account not approved yet.");
+            return;
+        }
 
-            try {
-                Parent root = FXMLLoader.load(getClass().getResource(fxmlFile));
-                Scene scene = new Scene(root, 800, 500);
-
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(scene);
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "Error", "Failed to load dashboard.");
-            }
+        String fxmlFile;
+        if ("Admin".equalsIgnoreCase(role)) {
+            fxmlFile = "/AdminFXML/AdminDashboard.fxml";
+        } else if ("Cashier".equalsIgnoreCase(role)) {
+            fxmlFile = "/CashierFXML/CashierDashboard.fxml";
         } else {
-            // Login failed or pending
-            showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid username/email or password, or account not approved yet.");
+            fxmlFile = "/UserFXML/UserDashboard.fxml";
+        }
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlFile));
+            Scene scene = new Scene(root, 1000, 600);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load dashboard.");
         }
     }
+
 
     
     private void showAlert(Alert.AlertType type, String title, String message) {
