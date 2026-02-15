@@ -15,7 +15,7 @@ import javax.mail.internet.MimeMessage;
 
 public class config {
 
-    // ✅ STATIC CONNECT (use everywhere: config.connectDB())
+    // STATIC CONNECT (use everywhere: config.connectDB())
     public static Connection connectDB() {
         Connection con = null;
         try {
@@ -43,7 +43,7 @@ public class config {
         }
     }
 
-    // ✅ UPDATED LOGIN: saves USER session for User, AdminSession for Admin/Cashier
+    // UPDATED LOGIN: saves USER session for User, AdminSession for Admin/Cashier
     public String login(String loginInput, String pass) {
         String role = null;
 
@@ -78,7 +78,7 @@ public class config {
                 String email = rs.getString("u_email");
                 role = rs.getString("u_role");
 
-                // ✅ clear old sessions first (avoid mix)
+                // Clear old sessions first (avoid mix)
                 UserSession.clear();
                 AdminSession.clear();
 

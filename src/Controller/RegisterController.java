@@ -15,9 +15,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 public class RegisterController implements Initializable {
@@ -29,25 +31,36 @@ public class RegisterController implements Initializable {
     @FXML
     private TextField unameInput;
     @FXML
-    private TextField passInput;
+    private PasswordField passInput;
     @FXML
     private Button registerBtn;
     @FXML
     private Label goLogin;
     @FXML
     private ComboBox<String> typeCombo;
+    @FXML
+    private ImageView logo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         typeCombo.getItems().addAll("Admin", "User", "Cashier");
-        typeCombo.setPromptText("Select Type"); // Optional placeholder
+        typeCombo.setPromptText("Select Type");
+        makeCircle(logo);
+    }
+    
+    private void makeCircle(ImageView imageView) {
+        double w = imageView.getFitWidth();
+        double h = imageView.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
+
+        Circle clip = new Circle(w / 2.0, h / 2.0, radius);
+        imageView.setClip(clip);
     }
 
     @FXML
     private void handleGoLoginClick(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Scene sc = new Scene(root, 1000, 600);
-        sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);
@@ -62,7 +75,7 @@ public class RegisterController implements Initializable {
         String email = emailInput.getText().trim();
         String uname = unameInput.getText().trim();
         String pass = passInput.getText().trim();
-        String role = typeCombo.getValue(); // ✅ Use getValue() here
+        String role = typeCombo.getValue(); // Use getValue() here
 
         if (name.isEmpty() || email.isEmpty() || uname.isEmpty() || pass.isEmpty() || role == null) {
             showAlert("All fields including type are required!", false);
@@ -99,7 +112,6 @@ public class RegisterController implements Initializable {
         // Redirect to login
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Scene sc = new Scene(root, 1000, 600);
-        sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);

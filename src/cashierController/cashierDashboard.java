@@ -90,8 +90,11 @@ public class cashierDashboard implements Initializable {
     }
 
     private void makeCircle(ImageView imageView) {
-        double radius = Math.min(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
-        Circle clip = new Circle(radius, radius, radius);
+        double w = imageView.getFitWidth();
+        double h = imageView.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
+
+        Circle clip = new Circle(w / 2.0, h / 2.0, radius);
         imageView.setClip(clip);
     }
 }

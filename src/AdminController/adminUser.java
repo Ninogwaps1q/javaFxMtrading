@@ -46,7 +46,7 @@ public class adminUser implements Initializable {
     @FXML private TableColumn<User, Integer> id;
     @FXML private TableColumn<User, String> name, email, uname, role, status;
 
-    // ✅ NEW columns
+    // New columns
     @FXML private TableColumn<User, String> phone, address;
 
     // FORM
@@ -74,7 +74,7 @@ public class adminUser implements Initializable {
         role.setCellValueFactory(new PropertyValueFactory<>("role"));
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // ✅ NEW mapping
+        // New mapping
         phone.setCellValueFactory(new PropertyValueFactory<>("phone"));
         address.setCellValueFactory(new PropertyValueFactory<>("address"));
 
@@ -88,7 +88,7 @@ public class adminUser implements Initializable {
         double w = img.getFitWidth() > 0 ? img.getFitWidth() : 60;
         double h = img.getFitHeight() > 0 ? img.getFitHeight() : 60;
         double r = Math.min(w, h) / 2.0;
-        img.setClip(new Circle(r, r, r));
+        img.setClip(new Circle(w / 2.0, h / 2.0, r));
     }
 
     // ================= LOAD USERS =================

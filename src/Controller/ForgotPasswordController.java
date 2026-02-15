@@ -2,12 +2,15 @@ package Controller;
 
 import config.config;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,15 +18,17 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-public class ForgotPasswordController {
+public class ForgotPasswordController implements Initializable{
 
     @FXML private TextField emailInput;
     @FXML private TextField codeInput;
     @FXML private PasswordField newPassInput;
-
+    
     private config con = new config();
     private int generatedCode;
     private String currentEmail;
@@ -31,7 +36,23 @@ public class ForgotPasswordController {
     private Button sendCodeBtn;
     @FXML
     private Button resetBtn;
+    @FXML
+    private ImageView logo;
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        makeCircle(logo);
+    }    
+    
+     private void makeCircle(ImageView imageView) {
+        double w = imageView.getFitWidth();
+        double h = imageView.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
 
+        Circle clip = new Circle(w / 2.0, h / 2.0, radius);
+        imageView.setClip(clip);
+    }
+    
     @FXML
     private void sendCodeAction(ActionEvent event) {
         String email = emailInput.getText().trim();
@@ -100,7 +121,6 @@ public class ForgotPasswordController {
             try {
                 Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
                 Scene sc = new Scene(root, 1000, 600);
-                sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(sc);
@@ -122,7 +142,6 @@ public class ForgotPasswordController {
     private void backHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Scene sc = new Scene(root, 1000, 600);
-        sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);

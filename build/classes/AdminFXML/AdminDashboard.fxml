@@ -1,129 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.AdminDashboard">
 
     <children>
 
         <!-- Sidebar -->
-        <VBox fx:id="panel" prefWidth="220" spacing="10" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0">
+        <VBox fx:id="panel" alignment="TOP_CENTER" fillWidth="true" prefWidth="220.0" spacing="12.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
 
-            <ImageView fx:id="logo" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="logo" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@../image/image6.jpg" />
                 </image>
-                <VBox.margin>
-                    <Insets left="22.0" />
-                </VBox.margin>
             </ImageView>
 
-            <Label fx:id="textPanel" text="Admin Panel">
-                <VBox.margin>
-                    <Insets bottom="20.0" left="50.0" />
-                </VBox.margin>
-            </Label>
+            <Label fx:id="textPanel" alignment="CENTER" maxWidth="Infinity" text="Admin Panel" />
 
-            <Button fx:id="dashboard" onAction="#dashboardButtonAction" styleClass="nav-btn" text="Dashboard">
-            <graphic>
-               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../image/icons8-dashboard-24.png" />
-                  </image>
-                  <viewport>
-                     <Rectangle2D />
-                  </viewport>
-               </ImageView>
-            </graphic>
-            <VBox.margin>
-               <Insets left="35.0" top="5.0" />
-            </VBox.margin></Button>
-            <Button fx:id="productBtn" onAction="#productButtonAction" styleClass="nav-btn" text="Products">
-            <graphic>
-               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../image/icons8-products-24.png" />
-                  </image>
-               </ImageView>
-            </graphic>
-            <VBox.margin>
-               <Insets left="35.0" top="5.0" />
-            </VBox.margin></Button>
-            <Button fx:id="salesBtn" onAction="#orderButtonAction" onMouseClicked="#saleHandleBtn" styleClass="nav-btn" text="Sales">
-            <graphic>
-               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../image/icons8-sales-24.png" />
-                  </image>
-               </ImageView>
-            </graphic>
-            <VBox.margin>
-               <Insets left="35.0" top="5.0" />
-            </VBox.margin></Button>
-            <Button fx:id="userBtn" onAction="#userButtonAction" styleClass="nav-btn" text="Users">
-            <graphic>
-               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../image/icons8-user-24.png" />
-                  </image>
-               </ImageView>
-            </graphic>
-            <VBox.margin>
-               <Insets left="35.0" top="5.0" />
-            </VBox.margin></Button>
-            <Button fx:id="logoutBtn" onAction="#logoutButtonAction" styleClass="nav-btn1" text="Logout">
-            <graphic>
-               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../image/icons8-logout-24.png" />
-                  </image>
-               </ImageView>
-            </graphic>
-            <VBox.margin>
-               <Insets left="35.0" top="10.0" />
-            </VBox.margin></Button>
+            <VBox maxWidth="Infinity" spacing="6.0">
+                <children>
+                    <Button fx:id="dashboard" maxWidth="Infinity" onAction="#dashboardButtonAction" styleClass="nav-btn" text="Dashboard">
+                        <graphic>
+                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../image/icons8-dashboard-24.png" />
+                                </image>
+                                <viewport>
+                                    <Rectangle2D />
+                                </viewport>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <Button fx:id="productBtn" maxWidth="Infinity" onAction="#productButtonAction" styleClass="nav-btn" text="Products">
+                        <graphic>
+                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../image/icons8-products-24.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <Button fx:id="salesBtn" maxWidth="Infinity" onAction="#orderButtonAction" onMouseClicked="#saleHandleBtn" styleClass="nav-btn" text="Sales">
+                        <graphic>
+                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../image/icons8-sales-24.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <Button fx:id="userBtn" maxWidth="Infinity" onAction="#userButtonAction" styleClass="nav-btn" text="Users">
+                        <graphic>
+                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../image/icons8-user-24.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </children>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <Button fx:id="logoutBtn" maxWidth="Infinity" onAction="#logoutButtonAction" styleClass="nav-btn1" text="Logout">
+                <graphic>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../image/icons8-logout-24.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
         </VBox>
 
-        <!-- Dashboard Title -->
-        <Label layoutX="240.0" layoutY="25.0" text="Dashboard">
-            <font>
-                <Font name="Times New Roman Bold" size="30.0" />
-            </font>
-        </Label>
+        <!-- Main content -->
+        <VBox spacing="14.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="20.0">
+            <children>
+                <Label styleClass="page-title" text="Dashboard" />
 
-        <!-- Profile Image -->
-        <ImageView fx:id="userprofile" fitHeight="120.0" fitWidth="120.0" layoutX="240.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../image/icons8-profile-50.png" />
-            </image>
-        </ImageView>
+                <!-- Profile Summary -->
+                <VBox maxWidth="Infinity" prefHeight="170.0" spacing="10.0" styleClass="surface dashboard-card">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0">
+                            <children>
+                                <ImageView fx:id="userprofile" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../image/icons8-profile-50.png" />
+                                    </image>
+                                </ImageView>
 
-        <!-- Admin Info -->
-        <Label fx:id="nameLabel" layoutX="380.0" layoutY="95.0" text="Name">
-            <font>
-                <Font size="16.0" />
-            </font>
-        </Label>
-
-        <Label fx:id="emailLabel" layoutX="380.0" layoutY="125.0" text="Email">
-            <font>
-                <Font size="14.0" />
-            </font>
-        </Label>
-
-        <Label fx:id="roleLabel" layoutX="380.0" layoutY="155.0" text="Role">
-            <font>
-                <Font size="14.0" />
-            </font>
-        </Label>
+                                <VBox spacing="6.0">
+                                    <children>
+                                        <Label fx:id="nameLabel" text="Name" />
+                                        <Label fx:id="emailLabel" text="Email" />
+                                        <Label fx:id="roleLabel" text="Role" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
 
     </children>
 </AnchorPane>

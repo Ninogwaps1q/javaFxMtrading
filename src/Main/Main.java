@@ -14,7 +14,6 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Landpage.fxml"));
         Scene sc = new Scene(root, 1000, 600);
-        sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
         primaryStage.setScene(sc);
         primaryStage.show();
     }

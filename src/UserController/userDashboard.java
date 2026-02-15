@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -48,8 +49,11 @@ public class userDashboard implements Initializable {
     } 
     
     private void makeCircle(ImageView imageView) {
-        double radius = Math.min(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
-        Circle clip = new Circle(radius, radius, radius);
+        double w = imageView.getFitWidth();
+        double h = imageView.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
+
+        Circle clip = new Circle(w / 2.0, h / 2.0, radius);
         imageView.setClip(clip);
     }
     
@@ -63,6 +67,11 @@ public class userDashboard implements Initializable {
 
     @FXML
     private void aboutHandleBtn(MouseEvent event) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle("About");
+        a.setHeaderText("Melynal Trading");
+        a.setContentText("Your trusted source for quality cosmetics and beauty products since 2017.");
+        a.showAndWait();
     }
 
     @FXML
@@ -76,6 +85,7 @@ public class userDashboard implements Initializable {
 
     @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
+        UserSession.clear();
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));

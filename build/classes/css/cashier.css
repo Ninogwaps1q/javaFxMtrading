@@ -1,135 +1,200 @@
-/* ========== NAV BAR ========== */
-#navPanel {
-    -fx-background-color: white;
-    -fx-padding: 10 40 10 40;
-    -fx-spacing: 25;
-    -fx-alignment: center-left;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);
+/* =========================================================
+   cashier.css
+   Used by: Cashier dashboard (and future cashier pages).
+   Goal: dark sidebar + clean light content, distinct accent.
+   ========================================================= */
+
+.root {
+    -fx-font-family: "Bahnschrift", "Segoe UI", "Tahoma", sans-serif;
+
+    /* Looked-up colors */
+    -app-bg: #f6f7fb;
+    -app-text: #0f172a;
+    -app-muted: rgba(15, 23, 42, 0.62);
+    -app-border: rgba(15, 23, 42, 0.10);
+    -app-surface: #ffffff;
+
+    -app-primary: #0ea5e9;         /* sky-500 */
+    -app-primary-hover: #0284c7;   /* sky-600 */
+    -app-primary-pressed: #0369a1; /* sky-700 */
+    -app-focus: rgba(14, 165, 233, 0.22);
+
+    -app-danger: #ef4444;          /* red-500 */
+    -app-danger-hover: #dc2626;    /* red-600 */
+
+    -fx-background-color: -app-bg;
 }
 
-/* Navigation text */
-.nav-item {
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333;
-    -fx-cursor: hand;
+.label {
+    -fx-text-fill: -app-text;
 }
 
-.nav-item:hover {
-    -fx-text-fill: #e64b9a;
+/* Some FXML roots use fx:id="AnchorPane" */
+#AnchorPane {
+    -fx-background-color: -app-bg;
 }
 
-/* ========== HERO BACKGROUND ========== */
-#hero {
-    -fx-background-color: linear-gradient(to right, #a92b6c, #ec5f9b);
-}
-#hero HBox {
-    -fx-background-color: rgba(255,255,255,0.15);
-    -fx-padding: 30;
-    -fx-spacing: 40;
-    -fx-background-radius: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 5);
-}
-
-/* ========== MAIN TITLE ========== */
-.title {
-    -fx-font-size: 42px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
+/* =========================================================
+   Surfaces (cards/panels)
+   ========================================================= */
+.surface {
+    -fx-background-color: -app-surface;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(15, 23, 42, 0.08);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.10), 22, 0.14, 0, 6);
 }
 
-/* ========== TAGLINE ========== */
-.subtitle {
+.dashboard-card {
+    -fx-padding: 18;
+}
+
+/* =========================================================
+   Sidebar
+   ========================================================= */
+#panel {
+    -fx-background-color: linear-gradient(to bottom, #0f172a, #111827);
+    -fx-padding: 26 14 26 14;
+}
+
+#textPanel {
+    -fx-text-fill: rgba(255, 255, 255, 0.92);
     -fx-font-size: 18px;
-    -fx-text-fill: white;
+    -fx-font-weight: 900;
 }
 
-/* ========== DESCRIPTION ========== */
-.description {
-    -fx-font-size: 14px;
-    -fx-text-fill: white;
-    -fx-opacity: 0.9;
+/* =========================================================
+   Forms (future screens)
+   ========================================================= */
+.text-field, .text-area, .password-field, .combo-box {
+    -fx-background-color: -app-surface;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(15, 23, 42, 0.12);
+    -fx-border-width: 1;
+    -fx-padding: 10 12 10 12;
 }
 
-/* ========== SHOP BUTTON ========== */
-.shop-btn {
-    -fx-background-color: #e1b04f;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-padding: 12 35 12 35;
-    -fx-background-radius: 30;
-    -fx-font-weight: bold;
+.text-field:focused, .text-area:focused, .password-field:focused, .combo-box:focused {
+    -fx-border-color: rgba(14, 165, 233, 0.55);
+    -fx-effect: dropshadow(gaussian, -app-focus, 18, 0.12, 0, 0);
+}
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+.button,
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 10 14 10 14;
+    -fx-font-weight: 900;
     -fx-cursor: hand;
 }
 
-.shop-btn:hover {
-    -fx-background-color: #f1c75a;
+/* Default buttons: treat as primary */
+.button,
+.btn-primary {
+    -fx-background-color: -app-primary;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 14, 0.12, 0, 4);
+}
+.button:hover,
+.btn-primary:hover {
+    -fx-background-color: -app-primary-hover;
+}
+.button:pressed,
+.btn-primary:pressed {
+    -fx-background-color: -app-primary-pressed;
+    -fx-opacity: 0.96;
 }
 
-/* ========== LOGO GLOW EFFECT ========== */
-.image-view {
-    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.6), 15, 0.4, 0, 0);
+.btn-secondary {
+    -fx-background-color: rgba(15, 23, 42, 0.06);
+    -fx-text-fill: -app-text;
+    -fx-effect: none;
+    -fx-border-color: rgba(15, 23, 42, 0.12);
+    -fx-border-width: 1;
+}
+.btn-secondary:hover {
+    -fx-background-color: rgba(15, 23, 42, 0.08);
+}
+.btn-secondary:pressed {
+    -fx-background-color: rgba(15, 23, 42, 0.10);
+    -fx-opacity: 0.96;
 }
 
-#Image{
-    -fx-border-radius: 50px;
+.btn-danger {
+    -fx-background-color: -app-danger;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 14, 0.12, 0, 4);
 }
-#profileBtn{
-    -fx-font-weight: bold;
-    -fx-font-size: 16px;
+.btn-danger:hover {
+    -fx-background-color: -app-danger-hover;
 }
-#profileBtn:hover {
-    -fx-text-fill: #e64b9a;
-}
-#navText{
-    -fx-font-weight: bold;
-    -fx-font-size: 16px;
-}
-#navText:hover{
-    -fx-text-fill: #e64b9a;
-}
-#profileImage {
-    -fx-background-radius: 70px;
-    -fx-border-radius: 70px;
-    -fx-border-width: 4;
-    -fx-border-color: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 5);
+.btn-danger:pressed {
+    -fx-background-color: -app-danger-hover;
+    -fx-opacity: 0.96;
 }
 
-/* ========== PROFILE INFO ========== */
-.profile-name {
+/* Sidebar navigation buttons override primary .button styling */
+.nav-btn, .nav-btn1 {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.90);
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-cursor: hand;
+    -fx-padding: 10 12 10 12;
+    -fx-graphic-text-gap: 12;
+    -fx-effect: none;
+}
+
+.nav-btn:hover, .nav-btn1:hover {
+    -fx-background-color: rgba(14, 165, 233, 0.22);
+    -fx-text-fill: white;
+}
+.nav-btn:pressed, .nav-btn1:pressed {
+    -fx-background-color: rgba(14, 165, 233, 0.30);
+    -fx-opacity: 0.96;
+}
+
+/* =========================================================
+   Headings + Text
+   ========================================================= */
+.page-title {
     -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
 }
 
-.profile-email {
+.muted-text {
+    -fx-text-fill: -app-muted;
+    -fx-font-weight: 800;
+}
+
+#nameLabel {
     -fx-font-size: 16px;
-    -fx-text-fill: #f0e6f7;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
 }
 
-.profile-role {
-    -fx-font-size: 14px;
-    -fx-text-fill: #f0e6f7;
-    -fx-opacity: 0.8;
+#emailLabel, #roleLabel {
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(15, 23, 42, 0.70);
 }
 
-/* ========== MAIN TITLE ========== */
-.title {
-    -fx-font-size: 42px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-
-/* ========== TAGLINE ========== */
-.subtitle {
-    -fx-font-size: 18px;
-    -fx-text-fill: white;
-}
-
-/* ========== DESCRIPTION ========== */
-.description {
-    -fx-font-size: 14px;
-    -fx-text-fill: white;
-    -fx-opacity: 0.9;
+/* =========================================================
+   Images
+   ========================================================= */
+#logo, #userprofile {
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 18, 0.14, 0, 6);
 }

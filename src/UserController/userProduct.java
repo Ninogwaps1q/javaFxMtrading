@@ -24,7 +24,6 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -42,7 +41,7 @@ public class userProduct {
     // products cards
     @FXML private FlowPane productFlow;
 
-    // ✅ search
+    // search
     @FXML private TextField searchField;
 
     // cart table
@@ -79,29 +78,48 @@ public class userProduct {
         updateCartBadge();
         makeCircle(navLogo);
 
-        // ✅ live search
+        // live search
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldV, newV) -> filterProducts(newV));
         }
     }
 
-    // ✅ circle logo
+    // circle logo
+    // circle logo (perfect circle + safe on load)
     private void makeCircle(ImageView imageView) {
         if (imageView == null) return;
 
-        // run later to ensure bounds exist
-        imageView.layoutBoundsProperty().addListener((obs, oldB, newB) -> {
-            double w = imageView.getFitWidth();
-            double h = imageView.getFitHeight();
+        // Make sure it's square so the circle is perfect
+        imageView.setPreserveRatio(false);
 
-            if (w <= 0) w = newB.getWidth();
-            if (h <= 0) h = newB.getHeight();
+        // Apply now + whenever size changes
+        Runnable apply = () -> {
+            double w = imageView.getBoundsInLocal().getWidth();
+            double h = imageView.getBoundsInLocal().getHeight();
+
+            // fallback to fit sizes if bounds are still 0
+            if (w <= 0) w = imageView.getFitWidth();
+            if (h <= 0) h = imageView.getFitHeight();
+
+            if (w <= 0 || h <= 0) return;
 
             double r = Math.min(w, h) / 2.0;
-            Circle clip = new Circle(r, r, r);
+
+            Circle clip = new Circle(w / 2.0, h / 2.0, r);
             imageView.setClip(clip);
+        };
+
+        // Apply after the node is rendered
+        imageView.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                javafx.application.Platform.runLater(apply);
+            }
         });
+
+        // Re-apply if size changes
+        imageView.boundsInLocalProperty().addListener((obs, oldB, newB) -> apply.run());
     }
+
 
     // =========================================================
     // CART TABLE SETUP
@@ -138,6 +156,10 @@ public class userProduct {
 
             {
                 box.setAlignment(Pos.CENTER);
+                box.getStyleClass().add("qty-box");
+                minus.getStyleClass().add("qty-btn");
+                plus.getStyleClass().add("qty-btn");
+                qtyLbl.getStyleClass().add("qty-value");
                 minus.setPrefWidth(28);
                 plus.setPrefWidth(28);
 
@@ -242,54 +264,54 @@ public class userProduct {
 
     private VBox makeProductCard(product p) {
         VBox card = new VBox(8);
-        card.setPrefWidth(190);
-        card.setPadding(new Insets(10));
-        card.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.95);" +
-            "-fx-background-radius: 14;" +
-            "-fx-border-radius: 14;" +
-            "-fx-border-color: rgba(0,0,0,0.06);" +
-            "-fx-border-width: 1;" +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 10, 0, 0, 2);"
-        );
+        card.setPrefWidth(220);
+        card.setPadding(new Insets(12));
+        card.getStyleClass().addAll("product-card", "surface");
 
         ImageView img = new ImageView();
-        img.setFitWidth(250);
-        img.setFitHeight(120);
-        img.setPreserveRatio(false); // ✅ fill the box
+        img.setFitWidth(220);
+        img.setFitHeight(140);
+        img.setPreserveRatio(false);
         img.setSmooth(true);
         img.setImage(loadImageSafe(p.getImage()));
+        img.getStyleClass().add("product-image");
 
-        Rectangle clip = new Rectangle(250, 120);
-        clip.setArcWidth(28);
-        clip.setArcHeight(28);
+        Rectangle clip = new Rectangle(220, 140);
+        clip.setArcWidth(24);
+        clip.setArcHeight(24);
         img.setClip(clip);
 
         Label name = new Label(p.getName());
-        name.setStyle("-fx-font-weight:bold; -fx-font-size:14;");
+        name.getStyleClass().add("product-title");
 
-        Label price = new Label("₱" + String.format("%.2f", p.getPrice()));
-        price.setStyle("-fx-font-size:13; -fx-font-weight:bold;");
+        Label price = new Label("PHP " + String.format("%.2f", p.getPrice()));
+        price.getStyleClass().add("product-price");
 
-        Label stock = new Label("Stock: " + p.getStock());
-        stock.setStyle("-fx-text-fill:#555;");
+        Label stock = new Label(p.getStock() > 0 ? ("Stock: " + p.getStock()) : "Out of stock");
+        stock.getStyleClass().add("product-meta");
+        if (p.getStock() <= 0) stock.getStyleClass().add("is-out");
 
         Button add = new Button("Add to Cart");
         add.setMaxWidth(Double.MAX_VALUE);
-        add.setStyle("-fx-background-color:#ff1493; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10;");
+        add.getStyleClass().add("btn-primary");
         add.setDisable(p.getStock() <= 0);
 
         Button details = new Button("View Details");
         details.setMaxWidth(Double.MAX_VALUE);
-        details.setStyle("-fx-background-color:#ff1493; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10;");
+        details.getStyleClass().add("btn-secondary");
 
         add.setOnAction(e -> addToCart(p.getId(), 1));
         details.setOnAction(e -> openDetailsModal(p));
+
+        // Prevent the card click handler from firing when buttons are clicked.
+        add.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> e.consume());
+        details.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> e.consume());
 
         card.setOnMouseClicked(e -> openDetailsModal(p));
 
         HBox btnRow = new HBox(8, add, details);
         btnRow.setAlignment(Pos.CENTER);
+        btnRow.getStyleClass().add("product-actions");
         HBox.setHgrow(add, Priority.ALWAYS);
         HBox.setHgrow(details, Priority.ALWAYS);
 
@@ -306,21 +328,13 @@ public class userProduct {
         modal.setTitle("Product Details");
 
         StackPane overlay = new StackPane();
-        overlay.setStyle("-fx-background-color: rgba(0,0,0,0.35);");
+        overlay.getStyleClass().add("modal-overlay");
 
         BorderPane glass = new BorderPane();
         glass.setMaxWidth(900);
         glass.setMaxHeight(650);
         glass.setPadding(new Insets(20));
-        glass.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.18);" +
-            "-fx-background-radius: 22;" +
-            "-fx-border-radius: 22;" +
-            "-fx-border-color: rgba(255,255,255,0.35);" +
-            "-fx-border-width: 1;" +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 25, 0, 0, 10);"
-        );
-        glass.setEffect(new GaussianBlur(0));
+        glass.getStyleClass().addAll("surface", "details-panel");
 
         ImageView img = new ImageView(loadImageSafe(p.getImage()));
         img.setFitWidth(360);
@@ -334,40 +348,34 @@ public class userProduct {
         left.setPadding(new Insets(10));
 
         Label title = new Label(p.getName());
-        title.setStyle("-fx-font-size:24; -fx-font-weight:bold; -fx-text-fill:white;");
+        title.getStyleClass().add("details-title");
 
         Label type = new Label("Type: " + p.getType());
-        type.setStyle("-fx-text-fill: rgba(255,255,255,0.90); -fx-font-size:14;");
+        type.getStyleClass().add("details-meta");
 
-        Label price = new Label("₱" + String.format("%.2f", p.getPrice()));
-        price.setStyle("-fx-text-fill:white; -fx-font-size:20; -fx-font-weight:bold;");
+        Label price = new Label("PHP " + String.format("%.2f", p.getPrice()));
+        price.getStyleClass().add("details-price");
 
         Label stock = new Label("Stock: " + p.getStock());
-        stock.setStyle("-fx-text-fill: rgba(255,255,255,0.85); -fx-font-size:13;");
+        stock.getStyleClass().add("details-meta");
 
         Label descTitle = new Label("Description");
-        descTitle.setStyle("-fx-text-fill:white; -fx-font-weight:bold; -fx-font-size:14;");
+        descTitle.getStyleClass().add("details-section-title");
 
         Label desc = new Label(p.getDesc() == null ? "" : p.getDesc());
         desc.setWrapText(true);
-        desc.setStyle("-fx-text-fill: rgba(255,255,255,0.88);");
+        desc.getStyleClass().add("details-desc-text");
 
         ScrollPane descScroll = new ScrollPane(desc);
         descScroll.setFitToWidth(true);
         descScroll.setPrefHeight(180);
-        descScroll.setStyle(
-            "-fx-background: transparent;" +
-            "-fx-background-color: rgba(255,255,255,0.10);" +
-            "-fx-background-radius: 14;" +
-            "-fx-border-radius: 14;" +
-            "-fx-border-color: rgba(255,255,255,0.20);"
-        );
+        descScroll.getStyleClass().add("details-desc");
 
         Label qtyLabel = new Label("Quantity:");
-        qtyLabel.setStyle("-fx-text-fill:white; -fx-font-weight:bold;");
+        qtyLabel.getStyleClass().add("details-section-title");
 
         Label qtyValue = new Label("1");
-        qtyValue.setStyle("-fx-text-fill:white; -fx-font-size:16; -fx-font-weight:bold;");
+        qtyValue.getStyleClass().add("details-qty-value");
 
         Slider qtySlider = new Slider(1, Math.max(1, p.getStock()), 1);
         qtySlider.setMajorTickUnit(1);
@@ -389,15 +397,15 @@ public class userProduct {
         VBox qtyBox = new VBox(6, qtyTop, qtySlider);
 
         Button add = new Button("Add to Cart");
-        add.setStyle("-fx-background-color:#ff1493; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:12;");
+        add.getStyleClass().add("btn-primary");
         add.setDisable(p.getStock() <= 0);
 
         Button buyNow = new Button("Buy Now");
-        buyNow.setStyle("-fx-background-color:#22c55e; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:12;");
+        buyNow.getStyleClass().add("btn-success");
         buyNow.setDisable(p.getStock() <= 0);
 
         Button close = new Button("Close");
-        close.setStyle("-fx-background-color: rgba(255,255,255,0.18); -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:12;");
+        close.getStyleClass().add("btn-secondary");
 
         add.setOnAction(e -> {
             int qty = (int) qtySlider.getValue();
@@ -426,6 +434,7 @@ public class userProduct {
 
         Scene scene = new Scene(overlay, 1000, 800);
         scene.setFill(Color.TRANSPARENT);
+        scene.getStylesheets().add(getClass().getResource("/css/user.css").toExternalForm());
 
         modal.initStyle(javafx.stage.StageStyle.TRANSPARENT);
         modal.setScene(scene);
@@ -500,7 +509,7 @@ public class userProduct {
 
             conn.commit();
 
-            cartMsg.setText("✅ Buy Now order placed! (Pending)");
+            cartMsg.setText("Buy Now order placed! (Pending)");
             loadProductsFromDB();
             loadCartFromDB();
             updateTotal();
@@ -707,13 +716,17 @@ public class userProduct {
     private void updateTotal() {
         double total = 0;
         for (CartItem i : cartItems) total += i.getSubtotal();
-        totalLabel.setText("₱" + String.format("%.2f", total));
+        totalLabel.setText("PHP " + String.format("%.2f", total));
     }
 
     private void updateCartBadge() {
-        if (cartBadge != null) {
-            cartBadge.setVisible(false);
-        }
+        if (cartBadge == null) return;
+
+        int count = 0;
+        for (CartItem i : cartItems) count += i.getQty();
+
+        cartBadge.setText(String.valueOf(count));
+        cartBadge.setVisible(count > 0);
     }
 
     // =========================================================
@@ -847,7 +860,14 @@ public class userProduct {
         stage.show();
     }
 
-    @FXML private void aboutHandleBtn(MouseEvent event) {}
+    @FXML
+    private void aboutHandleBtn(MouseEvent event) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle("About");
+        a.setHeaderText("Melynal Trading");
+        a.setContentText("Your trusted source for quality cosmetics and beauty products since 2017.");
+        a.showAndWait();
+    }
 
     @FXML private void profileHandlebtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserProfile.fxml"));

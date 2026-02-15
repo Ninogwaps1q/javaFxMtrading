@@ -13,52 +13,40 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(#f48fb1, #d63384,#f48fb1);" stylesheets="@../css/user.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UserController.UserProfile1">
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/user.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UserController.UserProfile1">
 
     <!-- ================= NAVIGATION HEADER ================= -->
-    <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 10;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <HBox fx:id="navPanel" alignment="CENTER_LEFT" prefHeight="80.0" spacing="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <children>
             <!-- LOGO -->
-            <ImageView fx:id="navLogo" fitHeight="60" fitWidth="60.0" preserveRatio="true">
+            <ImageView fx:id="navLogo" fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
                 <image>
                     <Image url="@../image/image6.jpg" />
                 </image>
                 <HBox.margin>
-                    <Insets left="30.0" />
+                    <Insets left="22.0" />
                 </HBox.margin>
             </ImageView>
 
             <!-- TITLE -->
-            <Label styleClass="nav-item" text="Melynal Trading">
-            <HBox.margin>
-               <Insets left="20.0" />
-            </HBox.margin></Label>
+            <Label styleClass="brand-title" text="Melynal Trading" />
 
             <!-- NAV BUTTONS -->
-            <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home">
-                <padding>
-                    <Insets left="60.0" />
-                </padding>
+            <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home" />
+            <Label onMouseClicked="#productHandleBtn" styleClass="nav-item" text="Products" />
+            <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" styleClass="nav-item" text="About" />
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <Label fx:id="profileBtn" onMouseClicked="#profileHandlebtn" styleClass="nav-item" text="Profile" />
+            <Label fx:id="logoutBtn" onMouseClicked="#handleLogoutBtn" styleClass="nav-item" text="Logout">
+                <HBox.margin>
+                    <Insets right="22.0" />
+                </HBox.margin>
             </Label>
-            <Label onMouseClicked="#productHandleBtn" styleClass="nav-item" text="Products">
-            <HBox.margin>
-               <Insets left="10.0" />
-            </HBox.margin></Label>
-            <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" styleClass="nav-item" text="About">
-                <padding>
-                    <Insets right="80.0" />
-                </padding>
-            <HBox.margin>
-               <Insets left="10.0" />
-            </HBox.margin>
-            </Label>
-            <Label fx:id="profileBtn" layoutX="422.0" layoutY="41.0" onMouseClicked="#profileHandlebtn" styleClass="nav-item" text="Profile" />
-            <Label fx:id="logoutBtn" layoutX="488.0" layoutY="41.0" onMouseClicked="#handleLogoutBtn" styleClass="nav-item" text="Logout">
-            <padding>
-               <Insets left="10.0" />
-            </padding></Label>
         </children>
     </HBox>
 
@@ -66,20 +54,20 @@
     <HBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0">
 
         <!-- LEFT PANEL: Profile Image + Info -->
-        <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0">
+        <VBox alignment="TOP_CENTER" prefWidth="260.0" spacing="12.0" styleClass="surface profile-side">
             <children>
                 <ImageView fx:id="profileImage" fitHeight="130.0" fitWidth="130.0">
                <VBox.margin>
                   <Insets top="40.0" />
                </VBox.margin></ImageView>
-                <Button onAction="#changePicture" text="Change Picture" />
-                <Label fx:id="nameLabel" style="-fx-font-size:16px; -fx-font-weight:bold;" />
+                <Button onAction="#changePicture" styleClass="btn-secondary" text="Change Picture" />
+                <Label fx:id="nameLabel" styleClass="profile-name" />
                 <Label fx:id="emailLabel" />
             </children>
         </VBox>
 
         <!-- RIGHT PANEL: Tabs -->
-        <VBox HBox.hgrow="ALWAYS">
+        <VBox HBox.hgrow="ALWAYS" styleClass="surface">
             <children>
                 <TabPane tabClosingPolicy="UNAVAILABLE">
 
@@ -89,7 +77,7 @@
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true">
                                     <content>
-                                        <VBox spacing="10.0" style="-fx-padding: 20;">
+                                        <VBox spacing="10.0" styleClass="form-pad">
                                             <children>
                                                 <Label text="Full Name" />
                                                         <TextField fx:id="fullNameField" />
@@ -100,15 +88,13 @@
                                                         <Label text="Email" />
                                                         <TextField fx:id="emailField" />
 
-                                                        <!-- ✅ Address first -->
                                                         <Label text="Address" />
                                                         <TextArea fx:id="addressField" prefRowCount="3" wrapText="true" />
 
-                                                        <!-- ✅ Phone next -->
                                                         <Label text="Phone" />
                                                         <TextField fx:id="phoneField" />
 
-                                                        <Button onAction="#updateProfile" text="Save Changes" />
+                                                        <Button onAction="#updateProfile" styleClass="btn-primary" text="Save Changes" />
                                             </children>
                                         </VBox>
                                     </content>
@@ -121,7 +107,7 @@
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true">
                                     <content>
-                                        <VBox spacing="10.0" style="-fx-padding: 20;">
+                                        <VBox spacing="10.0" styleClass="form-pad">
                                             <children>
                                                 <Label text="Old Password" />
                                                 <PasswordField fx:id="oldPass" />
@@ -129,7 +115,7 @@
                                                 <Label text="New Password" />
                                                 <PasswordField fx:id="newPass" />
 
-                                                <Button onAction="#updatePassword" text="Update Password" />
+                                                <Button onAction="#updatePassword" styleClass="btn-primary" text="Update Password" />
                                             </children>
                                         </VBox>
                                     </content>

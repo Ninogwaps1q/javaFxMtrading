@@ -56,12 +56,12 @@ public class UserProfile1 implements Initializable {
 
         userId = UserSession.getId();
 
-        // ✅ Make logo circular
+        // Make logo circular
         if (navLogo != null) {
             makeCircle(navLogo);
         }
 
-        // ✅ Make profile image circular
+        // Make profile image circular
         if (profileImage != null) {
             makeCircle(profileImage);
         }
@@ -82,12 +82,11 @@ public class UserProfile1 implements Initializable {
 
     
     private void makeCircle(ImageView imageView) {
-        double radius = Math.min(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
+        double w = imageView.getFitWidth();
+        double h = imageView.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
 
-        javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(
-                radius, radius, radius
-        );
-
+        javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(w / 2.0, h / 2.0, radius);
         imageView.setClip(clip);
     }
 
@@ -170,7 +169,7 @@ public class UserProfile1 implements Initializable {
 
             Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            // ✅ save relative path
+            // Save relative path
             imagePath = "uploads/" + newFileName;
 
             profileImage.setImage(new Image(targetPath.toUri().toString(), true));
@@ -296,11 +295,13 @@ public class UserProfile1 implements Initializable {
         stage.setScene(new Scene(root, 1000, 600));
         stage.show();
     }
-    @FXML private void aboutHandleBtn(MouseEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/.fxml"));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root,1000, 600));
-        stage.show();
+    @FXML
+    private void aboutHandleBtn(MouseEvent event) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle("About");
+        a.setHeaderText("Melynal Trading");
+        a.setContentText("Your trusted source for quality cosmetics and beauty products since 2017.");
+        a.showAndWait();
     }
     @FXML private void profileHandlebtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserProfile.fxml"));

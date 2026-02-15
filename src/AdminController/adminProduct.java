@@ -239,8 +239,11 @@ public class adminProduct implements Initializable {
     // SIDEBAR NAVIGATION
     // =================================================
     private void makeCircle(ImageView img) {
-        double radius = Math.min(img.getFitWidth(), img.getFitHeight()) / 2;
-        Circle clip = new Circle(radius, radius, radius);
+        double w = img.getFitWidth();
+        double h = img.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
+
+        Circle clip = new Circle(w / 2.0, h / 2.0, radius);
         img.setClip(clip);
     }
 

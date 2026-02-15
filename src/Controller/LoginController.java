@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 
 public class LoginController implements Initializable {
 
+    @FXML
     private ImageView logo;
     @FXML
     private TextField UsernameLogin;
@@ -41,13 +42,22 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        makeCircle(logo);
     }    
+    
+     private void makeCircle(ImageView imageView) {
+        double w = imageView.getFitWidth();
+        double h = imageView.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
+
+        Circle clip = new Circle(w / 2.0, h / 2.0, radius);
+        imageView.setClip(clip);
+    }
 
     @FXML
     private void handleForgotClick(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/ForgotPassword.fxml"));
         Scene sc = new Scene(root, 1000, 600);
-        sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);
@@ -58,7 +68,6 @@ public class LoginController implements Initializable {
     private void handleCreataAcc(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Register.fxml"));
         Scene sc = new Scene(root, 1000,600);
-        sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);

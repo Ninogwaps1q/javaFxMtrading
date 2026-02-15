@@ -34,8 +34,11 @@ public class LandingDashboard implements Initializable {
     }    
 
     private void makeCircle(ImageView logo) {
-        double radius = Math.min(logo.getFitWidth(), logo.getFitHeight()) / 2;
-        Circle clip = new Circle(radius, radius, radius);
+        double w = logo.getFitWidth();
+        double h = logo.getFitHeight();
+        double radius = Math.min(w, h) / 2.0;
+
+        Circle clip = new Circle(w / 2.0, h / 2.0, radius);
         logo.setClip(clip);
     }
 
@@ -43,7 +46,6 @@ public class LandingDashboard implements Initializable {
     private void continueHandleBtn(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Scene sc = new Scene(root, 1000, 600);
-        sc.getStylesheets().add(getClass().getResource("/css/Main.css").toExternalForm());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);

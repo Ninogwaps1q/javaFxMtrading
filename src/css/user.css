@@ -1,293 +1,453 @@
-/* ================= GLOBAL STYLES ================= */
+/* =========================================================
+   user.css
+   Used by: User dashboard, product list/cart, profile.
+   Goal: light, clean app UI with a strong rose accent.
+   ========================================================= */
+
 .root {
-    -fx-font-family: "Segoe UI", "Tahoma", sans-serif;
-    -fx-background-color: linear-gradient(to bottom, #f48fb1, #d63384, #f48fb1);
+    -fx-font-family: "Bahnschrift", "Segoe UI", "Tahoma", sans-serif;
+
+    /* Looked-up colors */
+    -app-bg: #f6f7fb;
+    -app-text: #0f172a;
+    -app-muted: rgba(15, 23, 42, 0.62);
+    -app-border: rgba(15, 23, 42, 0.10);
+    -app-surface: #ffffff;
+
+    -app-primary: #db2777;
+    -app-primary-hover: #be185d;
+    -app-primary-pressed: #9d174d;
+
+    -app-success: #16a34a;
+    -app-success-hover: #15803d;
+
+    -app-focus: rgba(219, 39, 119, 0.22);
+
+    -fx-background-color: -app-bg;
 }
 
-/* Smooth default text */
 .label {
-    -fx-text-fill: #222;
+    -fx-text-fill: -app-text;
 }
 
-/* ================= APP SURFACE / PANELS ================= */
-/* Use this by adding styleClass="surface" in FXML if you want,
-   but it won't break if you don't. */
+/* =========================================================
+   Surfaces (cards/panels)
+   ========================================================= */
 .surface {
-    -fx-background-color: rgba(255,255,255,0.92);
+    -fx-background-color: -app-surface;
     -fx-background-radius: 18;
     -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.06);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0, 0, 6);
+    -fx-border-color: rgba(15, 23, 42, 0.08);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.10), 22, 0.14, 0, 6);
 }
 
-/* ================= PROFILE IMAGE ================= */
-#profileImage {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 14, 0, 0, 4);
+/* =========================================================
+   Top navigation
+   ========================================================= */
+#navPanel {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-padding: 12 18 12 18;
+    -fx-spacing: 14;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 16, 0.12, 0, 4);
+}
+
+.brand-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+    -fx-padding: 0 8 0 0;
+}
+
+.nav-item {
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(15, 23, 42, 0.72);
     -fx-cursor: hand;
+    -fx-padding: 8 10 8 10;
+    -fx-background-radius: 10;
 }
 
-#profileImage:hover {
-    -fx-scale-x: 1.04;
-    -fx-scale-y: 1.04;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.40), 18, 0, 0, 6);
+.nav-item:hover {
+    -fx-text-fill: -app-primary;
+    -fx-background-color: rgba(219, 39, 119, 0.10);
 }
 
-/* ================= INPUTS ================= */
-.text-field, .text-area, .password-field {
-    -fx-background-color: white;
+.cart-chip {
+    -fx-padding: 6 10 6 10;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
-    -fx-border-color: rgba(214, 51, 132, 0.55);
+    -fx-border-color: rgba(15, 23, 42, 0.10);
+    -fx-border-width: 1;
+    -fx-background-color: rgba(255, 255, 255, 0.70);
+}
+
+#cartBadge {
+    -fx-background-color: -app-primary;
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+    -fx-font-size: 11px;
+    -fx-background-radius: 12;
+    -fx-padding: 2 7 2 7;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 10, 0.15, 0, 2);
+}
+
+/* =========================================================
+   Hero (dashboard)
+   ========================================================= */
+#hero {
+    -fx-padding: 44 22 44 22;
+    -fx-alignment: center;
+    -fx-spacing: 14;
+    -fx-background-color: linear-gradient(to bottom right, #0f172a, #831843);
+}
+
+#heroLogo {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 22, 0.14, 0, 8);
+}
+
+.title {
+    -fx-font-size: 34px;
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+}
+
+.subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: rgba(255, 255, 255, 0.90);
+    -fx-font-weight: 700;
+}
+
+.description {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: rgba(255, 255, 255, 0.82);
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
+
+.shop-btn {
+    -fx-background-color: -app-primary;
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+    -fx-padding: 12 22 12 22;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 18, 0.12, 0, 6);
+}
+.shop-btn:hover { -fx-background-color: -app-primary-hover; }
+.shop-btn:pressed { -fx-background-color: -app-primary-pressed; -fx-opacity: 0.96; }
+
+/* =========================================================
+   Controls
+   ========================================================= */
+.text-field, .password-field, .text-area {
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(15, 23, 42, 0.10);
     -fx-border-width: 1;
     -fx-padding: 10 12 10 12;
     -fx-font-size: 13px;
 }
 
-.text-area .content {
-    -fx-background-color: white;
-    -fx-background-radius: 12;
+.text-field:focused, .password-field:focused, .text-area:focused {
+    -fx-effect: dropshadow(gaussian, -app-focus, 20, 0.12, 0, 0);
+    -fx-border-color: rgba(219, 39, 119, 0.45);
 }
 
-.text-field:focused, .text-area:focused, .password-field:focused {
-    -fx-border-color: rgba(255, 20, 147, 0.95);
-    -fx-effect: dropshadow(gaussian, rgba(255, 20, 147, 0.25), 12, 0, 0, 3);
-}
-
-/* ================= COMBOBOX ================= */
-.combo-box {
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: rgba(214, 51, 132, 0.55);
-    -fx-background-color: white;
-    -fx-padding: 4 8 4 8;
-}
-.combo-box:focused {
-    -fx-border-color: rgba(255, 20, 147, 0.95);
-    -fx-effect: dropshadow(gaussian, rgba(255, 20, 147, 0.25), 12, 0, 0, 3);
-}
-
-/* ================= BUTTONS (REAL APP STYLE) ================= */
-.button {
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-    -fx-padding: 10 16 10 16;
-    -fx-font-size: 13px;
-    -fx-background-color: #e91e63;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 10, 0, 0, 3);
-}
-
-.button:hover {
-    -fx-background-color: #d81b60;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 14, 0, 0, 4);
-    -fx-translate-y: -1;
-}
-
-.button:pressed {
-    -fx-translate-y: 0;
-    -fx-opacity: 0.95;
-}
-
-/* Optional utility classes (use in FXML if you want) */
-.btn-primary {
-    -fx-background-color: #ff1493;
-    -fx-text-fill: white;
-}
-.btn-primary:hover { -fx-background-color: #e21384; }
-
-.btn-neutral {
-    -fx-background-color: #f3f4f6;
-    -fx-text-fill: #222;
-    -fx-effect: none;
-    -fx-border-color: rgba(0,0,0,0.08);
-    -fx-border-width: 1;
-}
-.btn-neutral:hover { -fx-background-color: #e9eaee; }
-
-.btn-danger {
-    -fx-background-color: #ef4444;
-    -fx-text-fill: white;
-}
-.btn-danger:hover { -fx-background-color: #dc2626; }
-
-/* ================= TAB PANE ================= */
-.tab-pane {
-    -fx-background-color: rgba(255,255,255,0.95);
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.06);
-    -fx-padding: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 16, 0, 0, 5);
-}
-
-.tab-pane .tab-header-area {
-    -fx-padding: 6 6 0 6;
-}
-
-.tab-pane .tab {
-    -fx-background-color: transparent;
-    -fx-padding: 8 14 8 14;
-}
-
-.tab-pane .tab-label {
-    -fx-font-weight: bold;
-    -fx-text-fill: #d63384;
-    -fx-font-size: 13px;
-}
-
-.tab-pane .tab:selected .tab-label {
-    -fx-text-fill: #ff1493;
-}
-
-/* ================= HERO SECTION ================= */
-#hero {
-    -fx-padding: 50 20 50 20;
-    -fx-alignment: center;
-}
-
-#heroLogo {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 18, 0, 0, 6);
-}
-
-#heroLogo:hover {
-    -fx-scale-x: 1.03;
-    -fx-scale-y: 1.03;
-}
-
-.title {
-    -fx-font-size: 32px;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 8, 0, 0, 2);
-}
-
-.subtitle {
-    -fx-font-size: 16px;
-    -fx-text-fill: rgba(255,255,255,0.92);
-    -fx-font-weight: 600;
-}
-
-.description {
-    -fx-font-size: 13px;
-    -fx-text-fill: rgba(255,255,255,0.86);
-    -fx-wrap-text: true;
-    -fx-text-alignment: center;
-    -fx-max-width: 560px;
-}
-
-/* ================= SHOP BUTTON ================= */
-.shop-btn {
-    -fx-background-color: #ff1493;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 12 26 12 26;
-    -fx-background-radius: 14;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 14, 0, 0, 4);
-}
-.shop-btn:hover {
-    -fx-background-color: #e21384;
-    -fx-translate-y: -1;
-}
-
-/* ================= TABLE VIEW (CART) ================= */
-.table-view {
-    -fx-background-color: white;
+.button,
+.btn-primary,
+.btn-secondary,
+.btn-success {
     -fx-background-radius: 14;
     -fx-border-radius: 14;
-    -fx-border-color: rgba(0,0,0,0.07);
+    -fx-padding: 10 16 10 16;
+    -fx-font-weight: 900;
+    -fx-cursor: hand;
+}
+
+.btn-primary {
+    -fx-background-color: -app-primary;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.14), 16, 0.10, 0, 5);
+}
+.btn-primary:hover { -fx-background-color: -app-primary-hover; }
+.btn-primary:pressed { -fx-background-color: -app-primary-pressed; -fx-opacity: 0.96; }
+
+.btn-secondary {
+    -fx-background-color: rgba(15, 23, 42, 0.06);
+    -fx-text-fill: -app-text;
+    -fx-effect: none;
+    -fx-border-color: rgba(15, 23, 42, 0.10);
     -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 16, 0, 0, 4);
+}
+.btn-secondary:hover { -fx-background-color: rgba(15, 23, 42, 0.08); }
+
+.btn-success {
+    -fx-background-color: -app-success;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.14), 16, 0.10, 0, 5);
+}
+.btn-success:hover { -fx-background-color: -app-success-hover; }
+.btn-success:pressed { -fx-opacity: 0.96; }
+
+/* =========================================================
+   Products page
+   ========================================================= */
+.split-pane {
+    -fx-background-color: transparent;
+}
+
+.split-pane-divider {
+    -fx-padding: 0 1 0 1;
+    -fx-background-color: rgba(15, 23, 42, 0.08);
+}
+
+.products-pane {
+    -fx-padding: 14;
+    -fx-background-color: transparent;
+}
+
+.product-card {
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-cursor: hand;
+}
+
+.product-card:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.16), 26, 0.14, 0, 10);
+}
+
+.product-title {
+    -fx-font-size: 13.5px;
+    -fx-font-weight: 900;
+}
+
+.product-price {
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-primary;
+}
+
+.product-meta {
+    -fx-text-fill: -app-muted;
+    -fx-font-weight: 800;
+    -fx-font-size: 12px;
+}
+
+.product-meta.is-out {
+    -fx-text-fill: rgba(239, 68, 68, 0.95);
+}
+
+.product-actions .btn-primary,
+.product-actions .btn-secondary {
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 12px;
+}
+
+.product-grid {
+    -fx-padding: 10;
+}
+
+.page-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.search-field {
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+}
+
+.clean-scroll {
+    -fx-background-color: transparent;
+}
+.clean-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.cart-pane {
+    -fx-padding: 14;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+}
+
+.total-label {
+    -fx-text-fill: -app-muted;
+    -fx-font-weight: 800;
+}
+
+.total-value {
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.hint-text {
+    -fx-text-fill: rgba(131, 24, 67, 0.92);
+    -fx-font-weight: 700;
+}
+
+/* =========================================================
+   TableView (Cart)
+   ========================================================= */
+.table-view {
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(15, 23, 42, 0.08);
+    -fx-border-width: 1;
 }
 
 .table-view .column-header-background {
-    -fx-background-color: #fafafa;
+    -fx-background-color: #fbfbfd;
     -fx-background-radius: 14 14 0 0;
-    -fx-border-color: rgba(0,0,0,0.07);
+    -fx-border-color: rgba(15, 23, 42, 0.08);
     -fx-border-width: 0 0 1 0;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: #111;
-    -fx-font-weight: bold;
+    -fx-text-fill: rgba(15, 23, 42, 0.85);
+    -fx-font-weight: 900;
     -fx-font-size: 12px;
 }
 
 .table-row-cell {
     -fx-background-color: white;
-    -fx-border-color: transparent transparent rgba(0,0,0,0.06) transparent;
+    -fx-border-color: transparent transparent rgba(15, 23, 42, 0.06) transparent;
     -fx-border-width: 0 0 1 0;
 }
 
 .table-row-cell:hover {
-    -fx-background-color: rgba(0,0,0,0.03);
+    -fx-background-color: rgba(15, 23, 42, 0.03);
 }
 
 .table-row-cell:filled:selected {
-    -fx-background-color: rgba(255, 20, 147, 0.10);
+    -fx-background-color: rgba(219, 39, 119, 0.10);
 }
 
 .table-cell {
     -fx-padding: 10 10 10 10;
-    -fx-text-fill: #222;
+    -fx-text-fill: rgba(15, 23, 42, 0.88);
 }
 
-/* ================= SCROLLPANE CLEAN ================= */
-.scroll-pane {
-    -fx-background-color: transparent;
-}
-.scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
-
-/* ================= BADGE ================= */
-#cartBadge {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 12;
-    -fx-padding: 2 7 2 7;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 10, 0, 0, 2);
-}
-
-/* ================= LAYOUT HELPERS ================= */
-VBox, HBox {
-    -fx-spacing: 12;
-}
-
-/* ======================================================
-   NAVBAR: DO NOT CHANGE
-   (Kept exactly as your original — NO modifications below)
-   ====================================================== */
-#navPanel {
-    -fx-background-color: white;
-    -fx-padding: 10 40 10 40;
-    -fx-spacing: 25;
-    -fx-alignment: center-left;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);
-}
-
-/* Navigation text */
-.nav-item {
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333;
+/* Qty controls created in code */
+.qty-btn {
+    -fx-background-color: rgba(15, 23, 42, 0.06);
+    -fx-border-color: rgba(15, 23, 42, 0.10);
+    -fx-border-width: 1;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-font-weight: 900;
     -fx-cursor: hand;
+    -fx-padding: 4 10 4 10;
+}
+.qty-btn:hover { -fx-background-color: rgba(15, 23, 42, 0.08); }
+
+.qty-value {
+    -fx-font-weight: 900;
+    -fx-text-fill: rgba(15, 23, 42, 0.85);
 }
 
-.nav-item:hover {
-    -fx-text-fill: #e64b9a;
-}
-
-/* ================= PRODUCT DETAILS MODAL ================= */
-.details-modal {
-    -fx-background-color: linear-gradient(to bottom, #f48fb1, #d63384);
+/* =========================================================
+   Modal (product details)
+   ========================================================= */
+.modal-overlay {
+    -fx-background-color: rgba(15, 23, 42, 0.55);
 }
 
 .details-panel {
-    -fx-background-color: rgba(255,255,255,0.96);
-    -fx-background-radius: 20;
-    -fx-padding: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0, 0, 8);
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+}
+
+.details-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+}
+
+.details-meta {
+    -fx-text-fill: -app-muted;
+    -fx-font-weight: 800;
+    -fx-font-size: 12.5px;
+}
+
+.details-price {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-primary;
+}
+
+.details-section-title {
+    -fx-font-weight: 900;
+}
+
+.details-desc {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: rgba(15, 23, 42, 0.10);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+}
+
+.details-desc > .viewport {
+    -fx-background-color: rgba(15, 23, 42, 0.03);
+    -fx-background-radius: 14;
+}
+
+.details-desc-text {
+    -fx-text-fill: rgba(15, 23, 42, 0.86);
+}
+
+.details-qty-value {
+    -fx-font-weight: 900;
+    -fx-font-size: 14px;
+}
+
+/* =========================================================
+   Profile page
+   ========================================================= */
+.profile-side {
+    -fx-padding: 18;
+}
+
+.profile-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+}
+
+.form-pad {
+    -fx-padding: 18;
+}
+
+#profileImage {
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 18, 0.14, 0, 6);
+    -fx-cursor: hand;
+}
+
+#profileImage:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+/* Tabs: keep simple and clean */
+.tab-pane {
+    -fx-background-color: transparent;
+}
+.tab-pane .tab-header-area {
+    -fx-padding: 8 10 0 10;
+}
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 8 12 8 12;
+}
+.tab-pane .tab-label {
+    -fx-font-weight: 900;
+    -fx-text-fill: rgba(15, 23, 42, 0.70);
+}
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: -app-primary;
 }
