@@ -3,22 +3,20 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/user.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UserController.userProduct">
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/user.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UserController.userCart">
 
     <children>
 
-        <!-- NAV BAR -->
         <HBox fx:id="navPanel" alignment="CENTER_LEFT" prefHeight="80.0" spacing="16.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
             <children>
                 <ImageView fx:id="navLogo" fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
@@ -34,11 +32,10 @@
 
                 <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home" />
                 <Label fx:id="productBtn" onMouseClicked="#productHandleBtn" styleClass="nav-item" text="Products" />
-                <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" styleClass="nav-item" text="About" />
+                <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" style="-fx-text-fill: white;" styleClass="nav-item" text="About" />
 
                 <Region HBox.hgrow="ALWAYS" />
 
-                <!-- Cart icon + badge -->
                 <StackPane onMouseClicked="#openCartPage" prefHeight="43.0" prefWidth="44.0" styleClass="cart-chip">
                     <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
                         <image>
@@ -59,27 +56,44 @@
                         <Insets right="22.0" />
                     </HBox.margin>
                 </Label>
-
             </children>
         </HBox>
 
-        <!-- BODY -->
-        <VBox spacing="12.0" styleClass="products-pane" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="80">
+        <VBox spacing="10.0" styleClass="cart-pane surface" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="94.0">
+            <children>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label styleClass="page-title" text="My Cart" />
+                    </children>
+                </HBox>
 
-            <HBox alignment="CENTER_LEFT" spacing="10.0">
-                <Label styleClass="page-title" text="Products" />
-                <Region HBox.hgrow="ALWAYS" />
-                <TextField fx:id="searchField" prefWidth="320.0" promptText="Search product..." styleClass="search-field" />
-                <Button onAction="#clearSearch" styleClass="btn-secondary" text="Clear" />
-            </HBox>
+                <TableView fx:id="cartTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="cImage" prefWidth="70" text="Img" />
+                        <TableColumn fx:id="cName" prefWidth="220" text="Item" />
+                        <TableColumn fx:id="cPrice" prefWidth="110" text="Price" />
+                        <TableColumn fx:id="cQty" prefWidth="160" text="Qty" />
+                        <TableColumn fx:id="cSubtotal" prefWidth="170" text="Subtotal" />
+                    </columns>
+                </TableView>
 
-            <Label fx:id="cartMsg" styleClass="hint-text" text="" />
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <children>
+                        <Label styleClass="total-label" text="Total:" />
+                        <Label fx:id="totalLabel" styleClass="total-value" text="PHP 0.00" />
+                    </children>
+                </HBox>
 
-            <ScrollPane fitToWidth="true" styleClass="clean-scroll" VBox.vgrow="ALWAYS">
-                <content>
-                    <FlowPane fx:id="productFlow" hgap="12.0" prefWrapLength="950.0" styleClass="product-grid" vgap="12.0" />
-                </content>
-            </ScrollPane>
+                <HBox spacing="10.0">
+                    <children>
+                        <Button onAction="#removeSelected" prefWidth="170.0" styleClass="btn-secondary" text="Remove Selected" />
+                        <Button onAction="#checkout" prefWidth="150.0" styleClass="btn-primary" text="Checkout" />
+                    </children>
+                </HBox>
+
+                <Label fx:id="cartMsg" styleClass="hint-text" text="" />
+            </children>
         </VBox>
+
     </children>
 </AnchorPane>

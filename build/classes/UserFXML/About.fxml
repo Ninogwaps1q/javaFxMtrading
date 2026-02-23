@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" styleClass="about-root" stylesheets="@../css/user.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UserController.aboutPage">
+    <children>
+        <HBox fx:id="navPanel" alignment="CENTER_LEFT" prefHeight="80.0" spacing="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <ImageView fx:id="navLogo" fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
+                    <image>
+                        <Image url="@../image/image6.jpg" />
+                    </image>
+                    <HBox.margin>
+                        <Insets left="22.0" />
+                    </HBox.margin>
+                </ImageView>
+
+                <Label styleClass="brand-title" text="Melynal Trading" />
+
+                <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home" />
+                <Label fx:id="productBtn" onMouseClicked="#productHandleBtn" styleClass="nav-item" text="Products" />
+                <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" styleClass="nav-item" text="About" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Label fx:id="profileBtn" onMouseClicked="#profileHandlebtn" styleClass="nav-item" text="Profile" />
+                <Label fx:id="logoutBtn" onMouseClicked="#handleLogoutBtn" styleClass="nav-item" text="Logout">
+                    <HBox.margin>
+                        <Insets right="22.0" />
+                    </HBox.margin>
+                </Label>
+            </children>
+        </HBox>
+
+        <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="surface about-card" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
+            <children>
+                <Label styleClass="about-title" text="About Melynal Trading" textFill="white" />
+                <Label styleClass="about-subtitle" text="Be Beautiful, Be Pocketful, Be A Blessing" />
+
+                <HBox alignment="CENTER_LEFT" maxWidth="900.0" spacing="28.0">
+                    <children>
+                        <ImageView fx:id="aboutLogo" fitHeight="290.0" fitWidth="290.0" preserveRatio="true" styleClass="about-logo">
+                            <image>
+                                <Image url="@../image/image6.jpg" />
+                            </image>
+                        </ImageView>
+
+                        <VBox alignment="TOP_LEFT" spacing="14.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="about-section-title" text="Our Story" />
+                                <Label maxWidth="560.0" styleClass="about-body" text="Since 2017, Melynal Trading has been your trusted partner in beauty and cosmetics." wrapText="true" />
+                                <Label maxWidth="560.0" styleClass="about-body" text="Founded with a simple mission: to make quality beauty products accessible and affordable for everyone. We carefully curate our collection to offer value without compromising quality." wrapText="true" />
+                                <Label maxWidth="560.0" styleClass="about-body" text="Our tagline, &quot;Be Beautiful, Be Pocketful, Be A Blessing,&quot; reflects our core values: helping you look your best while keeping your budget intact." wrapText="true" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

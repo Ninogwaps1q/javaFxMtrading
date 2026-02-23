@@ -71,10 +71,8 @@ public class userProduct {
 
     public void initialize() {
         userId = UserSession.getId();
-        setupCartTable();
         loadProductsFromDB();
         loadCartFromDB();
-        updateTotal();
         updateCartBadge();
         makeCircle(navLogo);
 
@@ -125,6 +123,9 @@ public class userProduct {
     // CART TABLE SETUP
     // =========================================================
     private void setupCartTable() {
+        if (cartTable == null || cImage == null || cName == null || cPrice == null || cQty == null || cSubtotal == null) {
+            return;
+        }
 
         cImage.setCellValueFactory(new PropertyValueFactory<>("image"));
         cImage.setCellFactory(col -> new TableCell<CartItem, String>() {
@@ -641,6 +642,7 @@ public class userProduct {
             loadCartFromDB();
             updateTotal();
             updateCartBadge();
+            cartMsg.setText("Added to cart. Click the cart icon to review.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -714,6 +716,7 @@ public class userProduct {
     }
 
     private void updateTotal() {
+        if (totalLabel == null) return;
         double total = 0;
         for (CartItem i : cartItems) total += i.getSubtotal();
         totalLabel.setText("PHP " + String.format("%.2f", total));
@@ -861,12 +864,11 @@ public class userProduct {
     }
 
     @FXML
-    private void aboutHandleBtn(MouseEvent event) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle("About");
-        a.setHeaderText("Melynal Trading");
-        a.setContentText("Your trusted source for quality cosmetics and beauty products since 2017.");
-        a.showAndWait();
+    private void aboutHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/About.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
 
     @FXML private void profileHandlebtn(MouseEvent event) throws IOException {
@@ -884,7 +886,11 @@ public class userProduct {
         stage.show();
     }
 
-    private void openCart() {
-        cartMsg.setText("Cart is on the right side.");
+    @FXML
+    private void openCartPage(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userCart.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
 }

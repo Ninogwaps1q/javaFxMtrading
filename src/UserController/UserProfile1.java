@@ -296,12 +296,11 @@ public class UserProfile1 implements Initializable {
         stage.show();
     }
     @FXML
-    private void aboutHandleBtn(MouseEvent event) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle("About");
-        a.setHeaderText("Melynal Trading");
-        a.setContentText("Your trusted source for quality cosmetics and beauty products since 2017.");
-        a.showAndWait();
+    private void aboutHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/About.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
     @FXML private void profileHandlebtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserProfile.fxml"));

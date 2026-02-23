@@ -81,6 +81,11 @@
     -fx-border-color: rgba(15, 23, 42, 0.10);
     -fx-border-width: 1;
     -fx-background-color: rgba(255, 255, 255, 0.70);
+    -fx-cursor: hand;
+}
+
+.cart-chip:hover {
+    -fx-background-color: rgba(219, 39, 119, 0.08);
 }
 
 #cartBadge {
@@ -450,4 +455,46 @@
 }
 .tab-pane .tab:selected .tab-label {
     -fx-text-fill: -app-primary;
+}
+
+/* =========================================================
+   About page
+   ========================================================= */
+.about-root {
+    -fx-background-color: linear-gradient(to bottom right, #0f172a, #831843);
+}
+
+.about-card {
+    -fx-padding: 26 28 26 28;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+}
+
+.about-title {
+    -fx-font-size: 50px;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+    
+}
+
+.about-subtitle {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: white;
+}
+
+.about-logo {
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.20), 24, 0.14, 0, 8);
+}
+
+.about-section-title {
+    -fx-font-size: 44px;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+}
+
+.about-body {
+    -fx-font-size: 15px;
+    -fx-font-weight: 300;
+    -fx-text-fill: white;
+    -fx-line-spacing: 2px;
 }
