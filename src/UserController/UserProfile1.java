@@ -308,6 +308,12 @@ public class UserProfile1 implements Initializable {
         stage.setScene(new Scene(root, 1000, 600));
         stage.show();
     }
+    @FXML private void orderHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrder.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
     @FXML private void handleLogoutBtn(MouseEvent event) throws IOException { UserSession.clear(); 
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

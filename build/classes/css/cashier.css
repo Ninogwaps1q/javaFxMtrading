@@ -50,6 +50,36 @@
     -fx-padding: 18;
 }
 
+.summary-card {
+    -fx-padding: 14 20 14 20;
+    -fx-background-color: #f7f9fc;
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-radius: 4;
+    -fx-border-color: #bfc9d8;
+    -fx-border-width: 1.5;
+    -fx-border-insets: 0;
+    -fx-effect: none;
+}
+
+.summary-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -app-muted;
+}
+
+.summary-value {
+    -fx-font-size: 36px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
 /* =========================================================
    Sidebar
    ========================================================= */
@@ -140,6 +170,19 @@
     -fx-opacity: 0.96;
 }
 
+.update-status-btn {
+    -fx-background-color: #0ea5a3;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.14), 14, 0.12, 0, 4);
+}
+.update-status-btn:hover {
+    -fx-background-color: #0f766e;
+}
+.update-status-btn:pressed {
+    -fx-background-color: #115e59;
+    -fx-opacity: 0.96;
+}
+
 /* Sidebar navigation buttons override primary .button styling */
 .nav-btn, .nav-btn1 {
     -fx-background-color: transparent;
@@ -192,9 +235,98 @@
     -fx-text-fill: rgba(15, 23, 42, 0.70);
 }
 
+.status-badge {
+    -fx-padding: 4 9 4 9;
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+}
+
+.status-delivered {
+    -fx-background-color: #15803d;
+    -fx-text-fill: white;
+}
+
+.status-shipped {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+}
+
+.status-pending {
+    -fx-background-color: #ca8a04;
+    -fx-text-fill: white;
+}
+
+.status-cancelled {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+}
+
 /* =========================================================
    Images
    ========================================================= */
 #logo, #userprofile {
     -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 18, 0.14, 0, 6);
+}
+
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-background-insets: 0;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(15, 23, 42, 0.10);
+    -fx-border-width: 1;
+    -fx-padding: 0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to right, #0f172a, #1f2937);
+    -fx-background-radius: 16 16 0 0;
+    -fx-background-insets: 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 42;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: rgba(255, 255, 255, 0.94);
+    -fx-font-weight: 900;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-row-cell {
+    -fx-cell-size: 44;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent rgba(15, 23, 42, 0.08) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #fcfdff;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: rgba(14, 165, 233, 0.10);
+}
+
+.table-row-cell:filled:selected,
+.table-row-cell:filled:selected:hover {
+    -fx-background-color: rgba(14, 165, 233, 0.18);
+}
+
+.table-cell {
+    -fx-padding: 0 12 0 12;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(15, 23, 42, 0.88);
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -app-muted;
+    -fx-font-weight: 800;
 }

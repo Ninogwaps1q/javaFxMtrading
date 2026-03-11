@@ -38,7 +38,7 @@
    Surfaces (cards/panels)
    ========================================================= */
 .surface {
-    -fx-background-color: -app-surface;
+    -fx-background-color: #ffffff;
     -fx-background-radius: 18;
     -fx-border-radius: 18;
     -fx-border-color: rgba(15, 23, 42, 0.08);
@@ -48,6 +48,69 @@
 
 .dashboard-card {
     -fx-padding: 18;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #d8dee8;
+    -fx-border-width: 1;
+    -fx-effect: none;
+}
+
+.summary-card {
+    -fx-padding: 14 20 14 20;
+    -fx-background-color: #f7f9fc;
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-radius: 4;
+    -fx-border-color: #bfc9d8;
+    -fx-border-width: 1.5;
+    -fx-border-insets: 0;
+    -fx-effect: none;
+}
+
+.summary-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -app-muted;
+}
+
+.summary-value {
+    -fx-font-size: 36px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.status-badge {
+    -fx-padding: 4 9 4 9;
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+}
+
+.status-delivered {
+    -fx-background-color: #15803d;
+    -fx-text-fill: white;
+}
+
+.status-shipped {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+}
+
+.status-pending {
+    -fx-background-color: #ca8a04;
+    -fx-text-fill: white;
+}
+
+.status-cancelled {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
 }
 
 /* =========================================================
@@ -68,12 +131,24 @@
    Forms
    ========================================================= */
 .text-field, .text-area, .password-field, .combo-box {
-    -fx-background-color: -app-surface;
+    -fx-background-color: #ffffff;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
     -fx-border-color: rgba(15, 23, 42, 0.12);
     -fx-border-width: 1;
     -fx-padding: 10 12 10 12;
+}
+
+.combo-box-base,
+.date-picker {
+    -fx-background-color: #ffffff;
+}
+
+.combo-box .list-cell,
+.combo-box > .list-cell,
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: -app-text;
 }
 
 .text-field:focused, .text-area:focused, .password-field:focused, .combo-box:focused {
@@ -109,6 +184,19 @@
 .button:pressed,
 .btn-primary:pressed {
     -fx-background-color: -app-primary-pressed;
+    -fx-opacity: 0.96;
+}
+
+.update-status-btn {
+    -fx-background-color: #0ea5a3;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.14), 14, 0.12, 0, 4);
+}
+.update-status-btn:hover {
+    -fx-background-color: #0f766e;
+}
+.update-status-btn:pressed {
+    -fx-background-color: #115e59;
     -fx-opacity: 0.96;
 }
 
@@ -207,38 +295,107 @@
 /* =========================================================
    Tables
    ========================================================= */
-#ViewUser, .table-view {
-    -fx-background-color: -app-surface;
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
+#ViewUser,
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-background-insets: 0;
+    -fx-border-radius: 16;
     -fx-border-color: rgba(15, 23, 42, 0.10);
     -fx-border-width: 1;
+    -fx-padding: 0;
 }
 
 #ViewUser .column-header-background,
 .table-view .column-header-background {
-    -fx-background-color: linear-gradient(to bottom, #0f172a, #111827);
-    -fx-border-color: rgba(15, 23, 42, 0.10);
+    -fx-background-color: linear-gradient(to right, #0f172a, #1f2937);
+    -fx-background-radius: 16 16 0 0;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.08) transparent;
     -fx-border-width: 0 0 1 0;
+}
+
+#ViewUser .column-header,
+#ViewUser .filler,
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 42;
+    -fx-border-color: transparent;
 }
 
 #ViewUser .column-header .label,
 .table-view .column-header .label {
-    -fx-text-fill: rgba(255, 255, 255, 0.92);
+    -fx-text-fill: rgba(255, 255, 255, 0.94);
     -fx-font-weight: 900;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+#ViewUser .virtual-flow .clipped-container .sheet,
+.table-view .virtual-flow .clipped-container .sheet {
+    -fx-background-color: #ffffff;
+}
+
+#ViewUser .table-row-cell,
+.table-row-cell {
+    -fx-cell-size: 44;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent rgba(15, 23, 42, 0.08) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-table-cell-border-color: transparent;
 }
 
 #ViewUser .table-row-cell:odd,
 .table-row-cell:odd {
-    -fx-background-color: #f6f7fb;
+    -fx-background-color: #fcfdff;
 }
 
 #ViewUser .table-row-cell:even,
 .table-row-cell:even {
-    -fx-background-color: white;
+    -fx-background-color: #ffffff;
 }
 
 #ViewUser .table-row-cell:hover,
 .table-row-cell:hover {
-    -fx-background-color: rgba(15, 23, 42, 0.04);
+    -fx-background-color: rgba(219, 39, 119, 0.08);
+}
+
+#ViewUser .table-row-cell:filled:selected,
+#ViewUser .table-row-cell:filled:selected:hover,
+.table-row-cell:filled:selected,
+.table-row-cell:filled:selected:hover {
+    -fx-background-color: rgba(219, 39, 119, 0.16);
+    -fx-border-color: transparent transparent rgba(219, 39, 119, 0.24) transparent;
+}
+
+#ViewUser .table-cell,
+.table-cell {
+    -fx-padding: 0 12 0 12;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(15, 23, 42, 0.88);
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -app-muted;
+    -fx-font-weight: 800;
+}
+
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10;
+    -fx-pref-height: 10;
+}
+
+.table-view .scroll-bar:vertical .thumb,
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(15, 23, 42, 0.24);
+    -fx-background-radius: 8;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover,
+.table-view .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: rgba(15, 23, 42, 0.35);
 }

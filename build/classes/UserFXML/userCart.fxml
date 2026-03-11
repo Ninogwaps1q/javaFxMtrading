@@ -32,7 +32,8 @@
 
                 <Label fx:id="homeBtn" onMouseClicked="#homeHandleBtn" styleClass="nav-item" text="Home" />
                 <Label fx:id="productBtn" onMouseClicked="#productHandleBtn" styleClass="nav-item" text="Products" />
-                <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" style="-fx-text-fill: white;" styleClass="nav-item" text="About" />
+                <Label fx:id="aboutBtn" onMouseClicked="#aboutHandleBtn" style="-fx-text-fill: black;" styleClass="nav-item" text="About" />
+                <Label onMouseClicked="#orderHandleBtn" styleClass="nav-item" text="Orders" />
 
                 <Region HBox.hgrow="ALWAYS" />
 

@@ -1,6 +1,7 @@
 package UserController;
 
 import Model.CartItem;
+import Model.CheckoutPayment;
 import config.config;
 
 import java.io.File;
@@ -230,6 +231,17 @@ public class userCart {
         cartBadge.setVisible(count > 0);
     }
 
+    private boolean ensureOrderProfileReady() {
+        String message = OrderValidationUtil.getMissingContactMessage(userId);
+        if (message == null) {
+            return true;
+        }
+
+        cartMsg.setText(message);
+        OrderValidationUtil.showProfileRequirementAlert(message);
+        return false;
+    }
+
     private void changeQty(CartItem item, int delta) {
         cartMsg.setText("");
         int newQty = item.getQty() + delta;
@@ -291,14 +303,27 @@ public class userCart {
             cartMsg.setText("Your cart is empty.");
             return;
         }
+        if (!ensureOrderProfileReady()) {
+            return;
+        }
 
-        String createOrder = "INSERT INTO tbl_orders(u_id,total,status) VALUES(?,?,?)";
+        double total = 0;
+        for (CartItem it : cartItems) total += it.getSubtotal();
+
+        CheckoutPayment payment = PaymentDialogUtil.showPaymentDialog(total);
+        if (payment == null) {
+            cartMsg.setText("Payment cancelled.");
+            return;
+        }
+
+        String createOrder = "INSERT INTO tbl_orders(u_id,total,status,payment_method,payment_ref) VALUES(?,?,?,?,?)";
         String addItem = "INSERT INTO tbl_order_items(o_id,p_id,qty,price) VALUES(?,?,?,?)";
         String deductStock = "UPDATE tbl_products SET p_stock = p_stock - ? WHERE p_id=? AND p_stock >= ?";
         String clearCart = "DELETE FROM tbl_cart_items WHERE c_id = (SELECT c_id FROM tbl_cart WHERE u_id=?)";
 
         try (Connection conn = config.connectDB()) {
             conn.setAutoCommit(false);
+            OrderSchemaUtil.ensurePaymentColumns(conn);
 
             for (CartItem it : cartItems) {
                 if (it.getQty() > it.getStock()) {
@@ -309,14 +334,13 @@ public class userCart {
                 }
             }
 
-            double total = 0;
-            for (CartItem it : cartItems) total += it.getSubtotal();
-
             int orderId;
             try (PreparedStatement ps = conn.prepareStatement(createOrder, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, userId);
                 ps.setDouble(2, total);
                 ps.setString(3, "Pending");
+                ps.setString(4, payment.getMethod());
+                ps.setString(5, payment.getReference());
                 ps.executeUpdate();
                 ResultSet keys = ps.getGeneratedKeys();
                 keys.next();
@@ -352,8 +376,13 @@ public class userCart {
             }
 
             conn.commit();
-            cartMsg.setText("Order placed! (Pending)");
             refreshCartUI();
+            try {
+                openOrderSuccessPage(orderId);
+            } catch (IOException io) {
+                io.printStackTrace();
+                cartMsg.setText("Order placed. Open Orders to view details.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -394,6 +423,14 @@ public class userCart {
     }
 
     @FXML
+    private void orderHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrder.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
+    @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
         UserSession.clear();
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
@@ -406,6 +443,14 @@ public class userCart {
     private void openCartPage(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userCart.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
+    private void openOrderSuccessPage(int orderId) throws IOException {
+        OrderSuccessSession.setLastOrderId(orderId);
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrderSuccess.fxml"));
+        Stage stage = (Stage) cartTable.getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));
         stage.show();
     }

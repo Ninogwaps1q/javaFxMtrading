@@ -3,6 +3,8 @@
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -86,32 +88,108 @@
         </VBox>
 
         <!-- Main content -->
-        <VBox spacing="14.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="20.0">
+        <VBox spacing="14.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
                 <Label styleClass="page-title" text="Dashboard" />
 
-                <!-- Profile Summary -->
-                <VBox maxWidth="Infinity" prefHeight="170.0" spacing="10.0" styleClass="surface dashboard-card">
+                <HBox spacing="12.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
+                        <VBox maxWidth="Infinity" spacing="8.0" styleClass="surface summary-card" HBox.hgrow="ALWAYS">
                             <children>
-                                <ImageView fx:id="userprofile" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/icons8-profile-50.png" />
-                                    </image>
-                                </ImageView>
-
-                                <VBox spacing="6.0">
+                                <Label styleClass="summary-title" text="Total Products" />
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
-                                        <Label fx:id="nameLabel" text="Name" />
-                                        <Label fx:id="emailLabel" text="Email" />
-                                        <Label fx:id="roleLabel" text="Role" />
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.35" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../image/icons8-product-24.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label fx:id="totalProductsLabel" styleClass="summary-value" text="0" />
+                                        <Region HBox.hgrow="ALWAYS" />
                                     </children>
-                                </VBox>
+                                </HBox>
                             </children>
-                        </HBox>
+                        </VBox>
+
+                        <VBox maxWidth="Infinity" spacing="8.0" styleClass="surface summary-card" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="summary-title" text="Total Orders" />
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.35" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../image/icons8-order-48.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label fx:id="totalOrdersLabel" styleClass="summary-value" text="0" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <VBox maxWidth="Infinity" spacing="8.0" styleClass="surface summary-card" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="summary-title" text="Total Customers" />
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.35" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../image/icons8-user-30.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label fx:id="totalCustomersLabel" styleClass="summary-value" text="0" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <VBox maxWidth="Infinity" spacing="8.0" styleClass="surface summary-card" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="summary-title" text="Total Revenue" />
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label fx:id="totalRevenueLabel" styleClass="summary-value" text="PHP 0.00" />
+                                        <Region prefHeight="53.0" prefWidth="59.0" HBox.hgrow="ALWAYS" />
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.35" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../image/icons8-sales-24.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
                     </children>
-                </VBox>
+                </HBox>
+
+                <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox spacing="10.0" styleClass="surface dashboard-card" HBox.hgrow="ALWAYS">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <children>
+                                        <Label styleClass="section-title" text="Recent Orders" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="viewAllBtn" onAction="#viewAllOrdersAction" prefWidth="96.0" styleClass="btn-primary" text="View All" />
+                                    </children>
+                                </HBox>
+
+                                <TableView fx:id="recentOrdersTable" prefHeight="373.0" prefWidth="983.0" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="recentOrderIdCol" prefWidth="100.0" text="Order ID" />
+                                        <TableColumn fx:id="recentCustomerCol" prefWidth="240.0" text="Customer" />
+                                        <TableColumn fx:id="recentAmountCol" prefWidth="138.0" text="Amount" />
+                                        <TableColumn fx:id="recentStatusCol" prefWidth="135.0" text="Status" />
+                                        <TableColumn fx:id="recentDateCol" prefWidth="125.0" text="Date" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </HBox>
             </children>
         </VBox>
 

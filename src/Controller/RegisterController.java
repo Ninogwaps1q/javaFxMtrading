@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -37,14 +36,10 @@ public class RegisterController implements Initializable {
     @FXML
     private Label goLogin;
     @FXML
-    private ComboBox<String> typeCombo;
-    @FXML
     private ImageView logo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        typeCombo.getItems().addAll("Admin", "User", "Cashier");
-        typeCombo.setPromptText("Select Type");
         makeCircle(logo);
     }
     
@@ -72,17 +67,22 @@ public class RegisterController implements Initializable {
         config con = new config();
 
         String name = nameInput.getText().trim();
-        String email = emailInput.getText().trim();
+        String email = emailInput.getText().trim().toLowerCase();
         String uname = unameInput.getText().trim();
         String pass = passInput.getText().trim();
-        String role = typeCombo.getValue(); // Use getValue() here
+        String role = "User";
 
-        if (name.isEmpty() || email.isEmpty() || uname.isEmpty() || pass.isEmpty() || role == null) {
-            showAlert("All fields including type are required!", false);
+        if (name.isEmpty() || email.isEmpty() || uname.isEmpty() || pass.isEmpty()) {
+            showAlert("All fields are required!", false);
             return;
         }
 
-        String checkEmail = "SELECT 1 FROM tbl_acc WHERE u_email = ?";
+        if (!isValidGmailAddress(email)) {
+            showAlert("Email must end with @gmail.com.", false);
+            return;
+        }
+
+        String checkEmail = "SELECT 1 FROM tbl_acc WHERE LOWER(u_email) = ?";
         if (con.recordExists(checkEmail, email)) {
             showAlert("Email already exists!", false);
             return;
@@ -107,7 +107,6 @@ public class RegisterController implements Initializable {
         emailInput.clear();
         unameInput.clear();
         passInput.clear();
-        typeCombo.setValue(null); // Clear selection
 
         // Redirect to login
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
@@ -116,6 +115,10 @@ public class RegisterController implements Initializable {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);
         stage.show();
+    }
+
+    private boolean isValidGmailAddress(String email) {
+        return email.matches("^[A-Za-z0-9._%+-]+@gmail\\.com$");
     }
 
     private void showAlert(String message, boolean success) {

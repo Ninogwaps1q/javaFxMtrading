@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/user.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UserController.userOrderSuccess">
+    <children>
+        <VBox spacing="12.0" styleClass="order-success-root" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="surface success-hero">
+                    <children>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="success-title" text="Order Successful" />
+                                <Label fx:id="successMsg" styleClass="success-subtitle" text="Your payment was processed successfully." wrapText="true" />
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER_RIGHT" spacing="8.0">
+                            <children>
+                                <Button onAction="#goOrdersAction" prefWidth="180.0" styleClass="btn-primary" text="View My Orders" />
+                                <Button onAction="#continueShoppingAction" prefWidth="180.0" styleClass="btn-secondary" text="Continue Shopping" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <HBox spacing="12.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox prefWidth="320.0" spacing="10.0" styleClass="surface order-summary-card">
+                            <children>
+                                <Label styleClass="section-title" text="Order Summary" />
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Order ID" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="orderIdValue" styleClass="summary-value" text="-" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Order Date" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="orderDateValue" styleClass="summary-value" text="-" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Payment" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="paymentMethodValue" styleClass="summary-value" text="-" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Reference" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="paymentRefValue" styleClass="summary-value" text="-" wrapText="true" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Status" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="statusValue" styleClass="summary-value" text="Pending" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Items" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="itemCountValue" styleClass="summary-value" text="0" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Total" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="totalValue" styleClass="summary-total" text="PHP 0.00" />
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox spacing="10.0" styleClass="surface order-items-card" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="section-title" text="Order Details" />
+                                <ScrollPane fitToWidth="true" styleClass="clean-scroll" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <VBox fx:id="itemsBox" spacing="10.0" />
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                            <padding>
+                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+            </padding>
+        </VBox>
+    </children>
+</AnchorPane>

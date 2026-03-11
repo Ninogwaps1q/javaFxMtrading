@@ -1,6 +1,7 @@
 package UserController;
 
 import Model.CartItem;
+import Model.CheckoutPayment;
 import Model.product;
 import config.config;
 
@@ -466,13 +467,24 @@ public class userProduct {
             cartMsg.setText("Not enough stock.");
             return false;
         }
+        if (!ensureOrderProfileReady()) {
+            return false;
+        }
 
-        String createOrder = "INSERT INTO tbl_orders(u_id,total,status) VALUES(?,?,?)";
+        double total = p.getPrice() * qty;
+        CheckoutPayment payment = PaymentDialogUtil.showPaymentDialog(total);
+        if (payment == null) {
+            cartMsg.setText("Payment cancelled.");
+            return false;
+        }
+
+        String createOrder = "INSERT INTO tbl_orders(u_id,total,status,payment_method,payment_ref) VALUES(?,?,?,?,?)";
         String addItem = "INSERT INTO tbl_order_items(o_id,p_id,qty,price) VALUES(?,?,?,?)";
         String deductStock = "UPDATE tbl_products SET p_stock = p_stock - ? WHERE p_id=? AND p_stock >= ?";
 
         try (Connection conn = config.connectDB()) {
             conn.setAutoCommit(false);
+            OrderSchemaUtil.ensurePaymentColumns(conn);
 
             try (PreparedStatement ps2 = conn.prepareStatement(deductStock)) {
                 ps2.setInt(1, qty);
@@ -487,13 +499,13 @@ public class userProduct {
                 }
             }
 
-            double total = p.getPrice() * qty;
-
             int orderId;
             try (PreparedStatement ps = conn.prepareStatement(createOrder, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, userId);
                 ps.setDouble(2, total);
                 ps.setString(3, "Pending");
+                ps.setString(4, payment.getMethod());
+                ps.setString(5, payment.getReference());
                 ps.executeUpdate();
                 ResultSet keys = ps.getGeneratedKeys();
                 keys.next();
@@ -510,11 +522,16 @@ public class userProduct {
 
             conn.commit();
 
-            cartMsg.setText("Buy Now order placed! (Pending)");
             loadProductsFromDB();
             loadCartFromDB();
             updateTotal();
             updateCartBadge();
+            try {
+                openOrderSuccessPage(orderId);
+            } catch (IOException io) {
+                io.printStackTrace();
+                cartMsg.setText("Order placed. Open Orders to view details.");
+            }
             return true;
 
         } catch (Exception e) {
@@ -732,6 +749,17 @@ public class userProduct {
         cartBadge.setVisible(count > 0);
     }
 
+    private boolean ensureOrderProfileReady() {
+        String message = OrderValidationUtil.getMissingContactMessage(userId);
+        if (message == null) {
+            return true;
+        }
+
+        cartMsg.setText(message);
+        OrderValidationUtil.showProfileRequirementAlert(message);
+        return false;
+    }
+
     // =========================================================
     // CART ACTIONS
     // =========================================================
@@ -766,14 +794,27 @@ public class userProduct {
             cartMsg.setText("Your cart is empty.");
             return;
         }
+        if (!ensureOrderProfileReady()) {
+            return;
+        }
 
-        String createOrder = "INSERT INTO tbl_orders(u_id,total,status) VALUES(?,?,?)";
+        double total = 0;
+        for (CartItem it : cartItems) total += it.getSubtotal();
+
+        CheckoutPayment payment = PaymentDialogUtil.showPaymentDialog(total);
+        if (payment == null) {
+            cartMsg.setText("Payment cancelled.");
+            return;
+        }
+
+        String createOrder = "INSERT INTO tbl_orders(u_id,total,status,payment_method,payment_ref) VALUES(?,?,?,?,?)";
         String addItem = "INSERT INTO tbl_order_items(o_id,p_id,qty,price) VALUES(?,?,?,?)";
         String deductStock = "UPDATE tbl_products SET p_stock = p_stock - ? WHERE p_id=? AND p_stock >= ?";
         String clearCart = "DELETE FROM tbl_cart_items WHERE c_id = (SELECT c_id FROM tbl_cart WHERE u_id=?)";
 
         try (Connection conn = config.connectDB()) {
             conn.setAutoCommit(false);
+            OrderSchemaUtil.ensurePaymentColumns(conn);
 
             for (CartItem it : cartItems) {
                 if (it.getQty() > it.getStock()) {
@@ -787,14 +828,13 @@ public class userProduct {
                 }
             }
 
-            double total = 0;
-            for (CartItem it : cartItems) total += it.getSubtotal();
-
             int orderId;
             try (PreparedStatement ps = conn.prepareStatement(createOrder, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, userId);
                 ps.setDouble(2, total);
                 ps.setString(3, "Pending");
+                ps.setString(4, payment.getMethod());
+                ps.setString(5, payment.getReference());
                 ps.executeUpdate();
                 ResultSet keys = ps.getGeneratedKeys();
                 keys.next();
@@ -834,16 +874,29 @@ public class userProduct {
 
             conn.commit();
 
-            cartMsg.setText("Order placed! (Pending)");
             loadProductsFromDB();
             loadCartFromDB();
             updateTotal();
             updateCartBadge();
+            try {
+                openOrderSuccessPage(orderId);
+            } catch (IOException io) {
+                io.printStackTrace();
+                cartMsg.setText("Order placed. Open Orders to view details.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             cartMsg.setText("Checkout failed.");
         }
+    }
+
+    private void openOrderSuccessPage(int orderId) throws IOException {
+        OrderSuccessSession.setLastOrderId(orderId);
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrderSuccess.fxml"));
+        Stage stage = (Stage) productFlow.getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
 
     // =========================================================
@@ -873,6 +926,14 @@ public class userProduct {
 
     @FXML private void profileHandlebtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserProfile.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
+    @FXML
+    private void orderHandleBtn(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrder.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));
         stage.show();

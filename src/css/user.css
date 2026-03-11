@@ -74,6 +74,11 @@
     -fx-background-color: rgba(219, 39, 119, 0.10);
 }
 
+.nav-item-active {
+    -fx-text-fill: -app-primary;
+    -fx-background-color: rgba(219, 39, 119, 0.14);
+}
+
 .cart-chip {
     -fx-padding: 6 10 6 10;
     -fx-background-radius: 12;
@@ -277,6 +282,98 @@
     -fx-padding: 14;
 }
 
+/* =========================================================
+   Orders page
+   ========================================================= */
+.orders-root {
+    -fx-padding: 14;
+    -fx-spacing: 12;
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        rgba(219, 39, 119, 0.06),
+        rgba(15, 23, 42, 0.02)
+    );
+}
+
+.orders-hero {
+    -fx-padding: 16 18 16 18;
+    -fx-background-color: linear-gradient(to right, #ffffff, #fff6fb);
+}
+
+.orders-title {
+    -fx-font-size: 23px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.orders-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -app-muted;
+}
+
+.orders-message {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(131, 24, 67, 0.92);
+}
+
+.orders-meta-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -app-muted;
+}
+
+.orders-meta-value {
+    -fx-font-size: 19px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-primary;
+}
+
+.orders-refresh-btn {
+    -fx-padding: 7 12 7 12;
+}
+
+.orders-stat-card {
+    -fx-padding: 10 12 10 12;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-border-color: rgba(15, 23, 42, 0.08);
+}
+
+.orders-stat-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -app-muted;
+}
+
+.orders-stat-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.orders-stat-pending {
+    -fx-background-color: rgba(202, 138, 4, 0.12);
+}
+
+.orders-stat-shipped {
+    -fx-background-color: rgba(37, 99, 235, 0.12);
+}
+
+.orders-stat-delivered {
+    -fx-background-color: rgba(21, 128, 61, 0.12);
+}
+
+.orders-stat-cancelled {
+    -fx-background-color: rgba(220, 38, 38, 0.10);
+}
+
+.orders-table-wrap {
+    -fx-padding: 12;
+}
+
 .section-title {
     -fx-font-size: 16px;
     -fx-font-weight: 900;
@@ -295,6 +392,31 @@
 .hint-text {
     -fx-text-fill: rgba(131, 24, 67, 0.92);
     -fx-font-weight: 700;
+}
+
+.payment-error {
+    -fx-text-fill: #b91c1c;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.payment-dialog-pane {
+    -fx-padding: 16 18 14 18;
+}
+
+.payment-dialog-pane .header-panel .label {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+}
+
+.payment-dialog-pane .button {
+    -fx-font-size: 14px;
+    -fx-padding: 10 18 10 18;
+}
+
+.payment-dialog-input {
+    -fx-font-size: 14px;
+    -fx-padding: 10 12 10 12;
 }
 
 /* =========================================================
@@ -338,6 +460,33 @@
 .table-cell {
     -fx-padding: 10 10 10 10;
     -fx-text-fill: rgba(15, 23, 42, 0.88);
+}
+
+.status-badge {
+    -fx-padding: 4 9 4 9;
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+}
+
+.status-delivered {
+    -fx-background-color: #15803d;
+    -fx-text-fill: white;
+}
+
+.status-shipped {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+}
+
+.status-pending {
+    -fx-background-color: #ca8a04;
+    -fx-text-fill: white;
+}
+
+.status-cancelled {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
 }
 
 /* Qty controls created in code */
@@ -410,6 +559,86 @@
 .details-qty-value {
     -fx-font-weight: 900;
     -fx-font-size: 14px;
+}
+
+/* =========================================================
+   Order Success page
+   ========================================================= */
+.order-success-root {
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        rgba(219, 39, 119, 0.05),
+        rgba(15, 23, 42, 0.03)
+    );
+}
+
+.success-hero {
+    -fx-padding: 16 18 16 18;
+    -fx-background-color: linear-gradient(to right, #ffffff, #eefcf3);
+}
+
+.success-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #065f46;
+}
+
+.success-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(15, 23, 42, 0.68);
+}
+
+.order-summary-card {
+    -fx-padding: 16;
+}
+
+.order-items-card {
+    -fx-padding: 16;
+}
+
+.summary-key {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(15, 23, 42, 0.65);
+}
+
+.summary-value {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -app-text;
+}
+
+.summary-total {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-primary;
+}
+
+.order-item-card {
+    -fx-padding: 12;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-border-color: rgba(15, 23, 42, 0.08);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.order-item-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+}
+
+.order-item-meta {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -app-muted;
+}
+
+.order-item-price {
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-primary;
 }
 
 /* =========================================================

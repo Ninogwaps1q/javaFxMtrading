@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
@@ -45,7 +49,7 @@
                      </graphic>
                   </Button>
 
-                  <Button fx:id="salesBtn" maxWidth="Infinity" onAction="#orderButtonAction" onMouseClicked="#saleHandlleBtn" styleClass="nav-btn" text="Sales">
+                  <Button fx:id="salesBtn" maxWidth="Infinity" onAction="#orderButtonAction" styleClass="nav-btn" text="Sales">
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20">
                            <image>
@@ -81,6 +85,37 @@
          </children>
       </VBox>
 
-      <Label layoutX="240.0" layoutY="25.0" styleClass="page-title" text="Sales" />
+      <VBox spacing="12.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label styleClass="page-title" text="All Orders" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="totalOrdersMetaLabel" styleClass="muted-text" text="Total Orders: 0" />
+               </children>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label styleClass="muted-text" text="Set Status:" />
+                  <ComboBox fx:id="statusTypeCombo" prefWidth="160.0" promptText="Status Type" />
+                  <Button fx:id="updateStatusBtn" onAction="#updateOrderStatusAction" styleClass="btn-primary update-status-btn" text="Update Status" />
+                  <Button fx:id="printOrderBtn" onAction="#printOrderDetailsAction" styleClass="btn-secondary" text="Print Order Details" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="statusMessageLabel" styleClass="muted-text" text="" />
+               </children>
+            </HBox>
+
+            <TableView fx:id="ordersTable" prefHeight="51.0" prefWidth="740.0" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="orderIdCol" prefWidth="91.0" text="Order ID" />
+                  <TableColumn fx:id="customerCol" prefWidth="314.0" text="Customer" />
+                  <TableColumn fx:id="amountCol" prefWidth="102.0" text="Amount" />
+                  <TableColumn fx:id="statusCol" prefWidth="83.0" text="Status" />
+                  <TableColumn fx:id="dateCol" prefWidth="146.0" text="Date" />
+               </columns>
+            </TableView>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

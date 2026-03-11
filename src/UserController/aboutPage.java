@@ -70,6 +70,11 @@ public class aboutPage implements Initializable {
     }
 
     @FXML
+    private void orderHandleBtn(MouseEvent event) throws IOException {
+        openPage("/UserFXML/userOrder.fxml", event);
+    }
+
+    @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
         UserSession.clear();
         openPage("/Main/Login.fxml", event);
