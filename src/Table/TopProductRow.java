@@ -1,0 +1,26 @@
+package Table;
+
+public class TopProductRow {
+
+    private final String productName;
+    private final int unitsSold;
+    private final double revenue;
+
+    public TopProductRow(String productName, int unitsSold, double revenue) {
+        this.productName = productName;
+        this.unitsSold = unitsSold;
+        this.revenue = revenue;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public int getUnitsSold() {
+        return unitsSold;
+    }
+
+    public double getRevenue() {
+        return revenue;
+    }
+}

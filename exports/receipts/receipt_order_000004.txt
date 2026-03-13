@@ -1,0 +1,18 @@
+MELYNAL TRADING
+ORDER RECEIPT
+============================================
+Order ID : #000004
+Date     : Mar 13, 2026 07:20 AM
+Status   : Pending
+Payment  : COD
+Reference: Pay on delivery
+Voucher  : 123
+--------------------------------------------
+Item                   Qty        Subtotal
+--------------------------------------------
+sy glow 24k gold         1         ₱370.00
+--------------------------------------------
+Gross Total : ₱370.00
+Discount    : ₱100.00
+Payable     : ₱270.00
+============================================

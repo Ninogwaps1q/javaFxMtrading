@@ -558,14 +558,16 @@ public class adminInventory implements Initializable {
     private void saleHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminSale.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
     private void openScene(ActionEvent event, String resource) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(resource));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        int width = "/Main/Login.fxml".equals(resource) ? 1000 : 1300;
+        int height = "/Main/Login.fxml".equals(resource) ? 600 : 800;
+        stage.setScene(new Scene(root, width, height));
         stage.show();
     }
 }

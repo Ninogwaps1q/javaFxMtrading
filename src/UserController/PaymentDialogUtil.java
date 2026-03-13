@@ -1,6 +1,8 @@
 package UserController;
 
 import Model.CheckoutPayment;
+import Model.VoucherDiscount;
+import config.VoucherDataUtil;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -21,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 public final class PaymentDialogUtil {
 
@@ -66,6 +70,22 @@ public final class PaymentDialogUtil {
         configureLargeInput(gcashNumberField);
         configureDigitInput(gcashNumberField, GCASH_NUMBER_MAX_DIGITS);
 
+        Label voucherCodeLabel = new Label("Voucher Code");
+        TextField voucherCodeField = new TextField();
+        voucherCodeField.setPromptText("Optional voucher code");
+        configureLargeInput(voucherCodeField);
+        voucherCodeField.setTextFormatter(new javafx.scene.control.TextFormatter<String>(change -> {
+            change.setText(change.getText().toUpperCase(Locale.ENGLISH));
+            return change;
+        }));
+
+        Button validateVoucherBtn = new Button("Check Voucher");
+        validateVoucherBtn.getStyleClass().add("btn-secondary");
+
+        Label voucherSummaryLabel = new Label("No voucher applied.");
+        voucherSummaryLabel.getStyleClass().add("hint-text");
+        voucherSummaryLabel.setWrapText(true);
+
         Label referenceLabel = new Label("Reference No.");
         TextField referenceField = new TextField();
         referenceField.setPromptText("Auto-generated");
@@ -108,6 +128,11 @@ public final class PaymentDialogUtil {
         int row = 0;
         grid.add(new Label("Method"), 0, row);
         grid.add(methodCombo, 1, row++);
+
+        HBox voucherBox = new HBox(8, voucherCodeField, validateVoucherBtn);
+        grid.add(voucherCodeLabel, 0, row);
+        grid.add(voucherBox, 1, row++);
+        grid.add(voucherSummaryLabel, 0, row++, 2, 1);
 
         grid.add(gcashNumberLabel, 0, row);
         grid.add(gcashNumberField, 1, row++);
@@ -162,6 +187,30 @@ public final class PaymentDialogUtil {
         methodCombo.valueProperty().addListener((obs, oldV, newV) -> refreshVisibility.run());
         refreshVisibility.run();
 
+        Runnable updateVoucherState = () -> {
+            VoucherDiscount voucher = VoucherDataUtil.validateVoucher(voucherCodeField.getText(), totalAmount);
+
+            if (!voucher.isValid()) {
+                voucherSummaryLabel.setText(voucher.getMessage());
+                return;
+            }
+
+            if (!voucher.hasVoucher()) {
+                voucherSummaryLabel.setText("No voucher applied. Payable total: " + formatMoney(totalAmount));
+                return;
+            }
+
+            voucherSummaryLabel.setText(String.format(
+                    Locale.ENGLISH,
+                    "Voucher %s applied. Discount: %s | Payable total: %s",
+                    voucher.getCode(),
+                    formatMoney(voucher.getDiscountAmount()),
+                    formatMoney(voucher.getPayableTotal())
+            ));
+        };
+        validateVoucherBtn.setOnAction(e -> updateVoucherState.run());
+        updateVoucherState.run();
+
         Node payButton = dialog.getDialogPane().lookupButton(payButtonType);
         final CheckoutPayment[] paymentHolder = new CheckoutPayment[1];
 
@@ -173,7 +222,9 @@ public final class PaymentDialogUtil {
                     cardNameField.getText(),
                     cardNumberField.getText(),
                     expiryField.getText(),
-                    cvvField.getText());
+                    cvvField.getText(),
+                    voucherCodeField.getText(),
+                    totalAmount);
 
             if (!validation.isValid()) {
                 errorLabel.setText(validation.errorMessage);
@@ -259,14 +310,27 @@ public final class PaymentDialogUtil {
             String cardholder,
             String cardNumber,
             String expiry,
-            String cvv) {
+            String cvv,
+            String voucherCode,
+            double grossTotal) {
+
+        VoucherDiscount voucher = VoucherDataUtil.validateVoucher(voucherCode, grossTotal);
+        if (!voucher.isValid()) {
+            return ValidationResult.error(voucher.getMessage());
+        }
 
         if (method == null || method.trim().isEmpty()) {
             return ValidationResult.error("Please choose a payment method.");
         }
 
         if (METHOD_COD.equals(method)) {
-            return ValidationResult.ok(new CheckoutPayment("COD", "Pay on delivery"));
+            return ValidationResult.ok(new CheckoutPayment(
+                    "COD",
+                    "Pay on delivery",
+                    voucher.getCode(),
+                    voucher.getGrossTotal(),
+                    voucher.getDiscountAmount(),
+                    voucher.getPayableTotal()));
         }
 
         if (METHOD_GCASH.equals(method)) {
@@ -276,7 +340,13 @@ public final class PaymentDialogUtil {
             }
 
             String ref = normalizeReference(paymentReference, METHOD_GCASH);
-            return ValidationResult.ok(new CheckoutPayment("GCash", ref));
+            return ValidationResult.ok(new CheckoutPayment(
+                    "GCash",
+                    ref,
+                    voucher.getCode(),
+                    voucher.getGrossTotal(),
+                    voucher.getDiscountAmount(),
+                    voucher.getPayableTotal()));
         }
 
         String cleanName = cardholder == null ? "" : cardholder.trim();
@@ -308,7 +378,13 @@ public final class PaymentDialogUtil {
         }
 
         String ref = normalizeReference(paymentReference, METHOD_CARD);
-        return ValidationResult.ok(new CheckoutPayment("Credit Card", ref));
+        return ValidationResult.ok(new CheckoutPayment(
+                "Credit Card",
+                ref,
+                voucher.getCode(),
+                voucher.getGrossTotal(),
+                voucher.getDiscountAmount(),
+                voucher.getPayableTotal()));
     }
 
     private static String normalizeGcashNumber(String input) {
@@ -333,8 +409,12 @@ public final class PaymentDialogUtil {
     private static String generateReference(String method) {
         String prefix = METHOD_GCASH.equals(method) ? "GC" : "CC";
         String timestamp = LocalDateTime.now().format(REFERENCE_TIME_FORMAT);
-        int randomPart = ThreadLocalRandom.current().nextInt(1000, 10000);
+        int randomPart = ThreadLocalRandom.current().nextInt(1300, 8000);
         return prefix + "-" + timestamp + "-" + randomPart;
+    }
+
+    private static String formatMoney(double amount) {
+        return String.format(Locale.ENGLISH, "PHP %.2f", amount);
     }
 
     private static String formatCardDigits(String digits) {

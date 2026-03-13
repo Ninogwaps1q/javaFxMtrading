@@ -654,7 +654,7 @@ public class adminProduct implements Initializable {
     private void dashboardButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/AdminDashboard.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -662,7 +662,7 @@ public class adminProduct implements Initializable {
     private void productButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminProduct.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -670,7 +670,7 @@ public class adminProduct implements Initializable {
     private void inventoryButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminInventory.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -678,7 +678,7 @@ public class adminProduct implements Initializable {
     private void userButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminUser.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -686,7 +686,7 @@ public class adminProduct implements Initializable {
     private void logsButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminLogs.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -703,7 +703,7 @@ public class adminProduct implements Initializable {
     private void saleHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminSale.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 

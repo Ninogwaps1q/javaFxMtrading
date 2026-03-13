@@ -120,7 +120,6 @@
                   <Label styleClass="muted-text" text="Set Status:" />
                   <ComboBox fx:id="statusTypeCombo" prefWidth="190.0" promptText="Status Type" />
                   <Button fx:id="updateStatusBtn" onAction="#updateOrderStatusAction" styleClass="btn-primary update-status-btn" text="Update Status" />
-                  <Button fx:id="printOrderBtn" onAction="#printOrderDetailsAction" styleClass="btn-secondary" text="Print Order Details" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Label fx:id="statusMessageLabel" styleClass="muted-text" text="" />
                </children>

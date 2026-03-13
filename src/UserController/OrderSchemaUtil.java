@@ -13,6 +13,9 @@ public final class OrderSchemaUtil {
     public static void ensurePaymentColumns(Connection conn) throws SQLException {
         addColumnIfMissing(conn, "tbl_orders", "payment_method", "TEXT");
         addColumnIfMissing(conn, "tbl_orders", "payment_ref", "TEXT");
+        addColumnIfMissing(conn, "tbl_orders", "gross_total", "REAL");
+        addColumnIfMissing(conn, "tbl_orders", "discount_amount", "REAL");
+        addColumnIfMissing(conn, "tbl_orders", "voucher_code", "TEXT");
     }
 
     private static void addColumnIfMissing(Connection conn, String table, String column, String type) throws SQLException {

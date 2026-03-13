@@ -280,15 +280,44 @@ public class userOrder implements Initializable {
                 return;
             }
 
+            String emailNote = sendDeliveredConfirmationEmail(selected.getOrderId());
             loadOrders();
-            ordersMsg.setText(String.format(
+            String message = String.format(
                     "Order #%06d marked as Delivered. Thank you for confirming receipt.",
                     selected.getOrderId()
-            ));
+            );
+            if (!emailNote.isEmpty()) {
+                message += " " + emailNote;
+            }
+            ordersMsg.setText(message);
         } catch (Exception e) {
             e.printStackTrace();
             ordersMsg.setText("Failed to update order receipt.");
         }
+    }
+
+    private String sendDeliveredConfirmationEmail(int orderId) {
+        String email = UserSession.getEmail();
+        if (email == null || email.trim().isEmpty()) {
+            return "Delivered email was skipped because your email is missing.";
+        }
+
+        String customerName = UserSession.getName();
+        if (customerName == null || customerName.trim().isEmpty()) {
+            customerName = "Customer";
+        }
+
+        String subject = "Order Delivered - Melynal Trading";
+        String body = "Hello " + customerName.trim() + ",\n\n"
+                + "Order #" + String.format("%06d", orderId) + " has been confirmed as Delivered.\n"
+                + "Thank you for shopping with Melynal Trading.\n\n"
+                + "You may now leave a review for your delivered items inside the order details page.\n\n"
+                + "Melynal Trading";
+
+        boolean sent = new config().sendEmail(email.trim(), subject, body);
+        return sent
+                ? "Delivered email sent to your account."
+                : "Order updated, but the delivered email could not be sent.";
     }
 
     @FXML
@@ -302,14 +331,16 @@ public class userOrder implements Initializable {
         OrderSuccessSession.setLastOrderId(selected.getOrderId());
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrderSuccess.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
     private void openPage(String fxml, MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(fxml));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        int width = "/Main/Login.fxml".equals(fxml) ? 1000 : 1300;
+        int height = "/Main/Login.fxml".equals(fxml) ? 600 : 800;
+        stage.setScene(new Scene(root, width, height));
         stage.show();
     }
 

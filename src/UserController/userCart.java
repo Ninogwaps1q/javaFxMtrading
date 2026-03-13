@@ -2,6 +2,7 @@ package UserController;
 
 import Model.CartItem;
 import Model.CheckoutPayment;
+import config.OrderPrintService;
 import config.SessionAuditUtil;
 import config.config;
 
@@ -315,7 +316,9 @@ public class userCart {
             return;
         }
 
-        String createOrder = "INSERT INTO tbl_orders(u_id,total,status,payment_method,payment_ref) VALUES(?,?,?,?,?)";
+        String createOrder = "INSERT INTO tbl_orders("
+                + "u_id,total,gross_total,discount_amount,voucher_code,status,payment_method,payment_ref"
+                + ") VALUES(?,?,?,?,?,?,?,?)";
         String addItem = "INSERT INTO tbl_order_items(o_id,p_id,qty,price) VALUES(?,?,?,?)";
         String deductStock = "UPDATE tbl_products SET p_stock = p_stock - ? WHERE p_id=? AND p_stock >= ?";
         String clearCart = "DELETE FROM tbl_cart_items WHERE c_id = (SELECT c_id FROM tbl_cart WHERE u_id=?)";
@@ -336,10 +339,13 @@ public class userCart {
             int orderId;
             try (PreparedStatement ps = conn.prepareStatement(createOrder, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, userId);
-                ps.setDouble(2, total);
-                ps.setString(3, "Pending");
-                ps.setString(4, payment.getMethod());
-                ps.setString(5, payment.getReference());
+                ps.setDouble(2, payment.getPayableTotal());
+                ps.setDouble(3, payment.getGrossTotal());
+                ps.setDouble(4, payment.getDiscountAmount());
+                ps.setString(5, payment.getVoucherCode());
+                ps.setString(6, "Pending");
+                ps.setString(7, payment.getMethod());
+                ps.setString(8, payment.getReference());
                 ps.executeUpdate();
                 ResultSet keys = ps.getGeneratedKeys();
                 keys.next();
@@ -372,12 +378,13 @@ public class userCart {
             config.deleteRecord(conn, clearCart, userId);
 
             conn.commit();
+            String autoPrintNote = OrderPrintService.autoPrintOrderNote(orderId);
             refreshCartUI();
             try {
-                openOrderSuccessPage(orderId);
+                openOrderSuccessPage(orderId, autoPrintNote);
             } catch (IOException io) {
                 io.printStackTrace();
-                cartMsg.setText("Order placed. Open Orders to view details.");
+                cartMsg.setText(autoPrintNote + " Open Orders to view details.");
             }
 
         } catch (Exception e) {
@@ -390,7 +397,7 @@ public class userCart {
     private void homeHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserDashboard.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -398,7 +405,7 @@ public class userCart {
     private void productHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userProduct.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -406,7 +413,7 @@ public class userCart {
     private void aboutHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/About.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -414,7 +421,7 @@ public class userCart {
     private void profileHandlebtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserProfile.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -422,7 +429,7 @@ public class userCart {
     private void orderHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrder.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -439,15 +446,16 @@ public class userCart {
     private void openCartPage(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userCart.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
-    private void openOrderSuccessPage(int orderId) throws IOException {
+    private void openOrderSuccessPage(int orderId, String entryMessage) throws IOException {
         OrderSuccessSession.setLastOrderId(orderId);
+        OrderSuccessSession.setEntryMessage(entryMessage);
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrderSuccess.fxml"));
         Stage stage = (Stage) cartTable.getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 }

@@ -67,7 +67,7 @@ public class LoginController implements Initializable {
     @FXML
     private void handleCreataAcc(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Register.fxml"));
-        Scene sc = new Scene(root, 1000,600);
+        Scene sc = new Scene(root, 1000, 600);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(sc);
@@ -105,7 +105,7 @@ public class LoginController implements Initializable {
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlFile));
-            Scene scene = new Scene(root, 1000, 600);
+            Scene scene = new Scene(root, 1300, 800);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.show();

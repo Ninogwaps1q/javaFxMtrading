@@ -23,6 +23,7 @@
                         </VBox>
                         <VBox alignment="CENTER_RIGHT" spacing="8.0">
                             <children>
+                                <Button onAction="#exportReceiptAction" prefWidth="180.0" styleClass="btn-secondary" text="Export Receipt" />
                                 <Button onAction="#goOrdersAction" prefWidth="180.0" styleClass="btn-primary" text="View My Orders" />
                                 <Button onAction="#continueShoppingAction" prefWidth="180.0" styleClass="btn-secondary" text="Continue Shopping" />
                             </children>
@@ -78,9 +79,33 @@
 
                                 <HBox spacing="8.0">
                                     <children>
+                                        <Label styleClass="summary-key" text="Voucher" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="voucherCodeValue" styleClass="summary-value" text="-" wrapText="true" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
                                         <Label styleClass="summary-key" text="Items" />
                                         <Region HBox.hgrow="ALWAYS" />
                                         <Label fx:id="itemCountValue" styleClass="summary-value" text="0" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Gross Total" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="grossTotalValue" styleClass="summary-value" text="PHP 0.00" />
+                                    </children>
+                                </HBox>
+
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Label styleClass="summary-key" text="Discount" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="discountValue" styleClass="summary-value" text="PHP 0.00" />
                                     </children>
                                 </HBox>
 

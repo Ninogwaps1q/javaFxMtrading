@@ -45,9 +45,7 @@ public final class OrderUpdateService {
                 return UpdateResult.error("This order is already cancelled and can no longer be updated.");
             }
 
-            boolean shouldNotifyReadyToDeliver =
-                    OrderStatusUtil.isReadyToDeliver(nextStatus)
-                    && !OrderStatusUtil.isReadyToDeliver(currentStatus);
+            String statusToNotify = statusToNotify(currentStatus, nextStatus);
 
             boolean restoredStock = false;
             if (OrderStatusUtil.isCancelled(nextStatus) && !OrderStatusUtil.isCancelled(currentStatus)) {
@@ -61,13 +59,13 @@ public final class OrderUpdateService {
                 return UpdateResult.error("No matching order was updated.");
             }
 
-            CustomerContact customerContact = shouldNotifyReadyToDeliver
+            CustomerContact customerContact = statusToNotify != null
                     ? findCustomerContact(conn, orderId)
                     : null;
 
             conn.commit();
-            String notificationNote = shouldNotifyReadyToDeliver
-                    ? sendReadyToDeliverEmail(orderId, customerContact)
+            String notificationNote = statusToNotify != null
+                    ? sendOrderStatusEmail(orderId, statusToNotify, customerContact)
                     : null;
             return UpdateResult.success(nextStatus, restoredStock, notificationNote);
         } catch (Exception e) {
@@ -165,27 +163,62 @@ public final class OrderUpdateService {
         }
     }
 
-    private static String sendReadyToDeliverEmail(int orderId, CustomerContact customerContact) {
+    private static String statusToNotify(String currentStatus, String nextStatus) {
+        String normalizedNext = OrderStatusUtil.normalizeDisplayStatus(nextStatus);
+        if (OrderStatusUtil.normalizeKey(currentStatus).equals(OrderStatusUtil.normalizeKey(normalizedNext))) {
+            return null;
+        }
+
+        if (OrderStatusUtil.isReadyToDeliver(normalizedNext)
+                || OrderStatusUtil.isDelivered(normalizedNext)
+                || OrderStatusUtil.isCancelled(normalizedNext)
+                || OrderStatusUtil.STATUS_SHIPPED.equalsIgnoreCase(normalizedNext)) {
+            return normalizedNext;
+        }
+        return null;
+    }
+
+    private static String sendOrderStatusEmail(int orderId, String status, CustomerContact customerContact) {
         if (customerContact == null || customerContact.email.trim().isEmpty()) {
-            return "Customer email was not found, so no Ready to Deliver email was sent.";
+            return "Customer email was not found, so no status email was sent.";
         }
 
         String customerName = customerContact.name == null || customerContact.name.trim().isEmpty()
                 ? "Customer"
                 : customerContact.name.trim();
 
-        String subject = "Order Ready to Deliver - Melynal Trading";
-        String body = "Hello " + customerName + ",\n\n"
-                + "Your order #" + String.format("%06d", orderId) + " is now Ready to Deliver.\n"
-                + "Please check your Melynal Trading orders page for the latest update.\n\n"
-                + "Thank you,\n"
-                + "Melynal Trading";
+        String displayStatus = OrderStatusUtil.normalizeDisplayStatus(status);
+        String subject = "Order " + displayStatus + " - Melynal Trading";
+        String body = buildStatusEmailBody(customerName, orderId, displayStatus);
 
         boolean sent = new config().sendEmail(customerContact.email.trim(), subject, body);
         if (sent) {
-            return "Ready to Deliver email sent to the customer.";
+            return displayStatus + " email sent to the customer.";
         }
-        return "Order updated, but the Ready to Deliver email could not be sent.";
+        return "Order updated, but the " + displayStatus + " email could not be sent.";
+    }
+
+    private static String buildStatusEmailBody(String customerName, int orderId, String displayStatus) {
+        String message;
+        if (OrderStatusUtil.STATUS_READY_TO_DELIVER.equalsIgnoreCase(displayStatus)) {
+            message = "Your order is now Ready to Deliver.";
+        } else if (OrderStatusUtil.STATUS_SHIPPED.equalsIgnoreCase(displayStatus)) {
+            message = "Your order has been shipped and is on the way.";
+        } else if (OrderStatusUtil.STATUS_CANCELLED.equalsIgnoreCase(displayStatus)) {
+            message = "Your order has been cancelled. Please contact support if you need help.";
+        } else if (OrderStatusUtil.STATUS_DELIVERED.equalsIgnoreCase(displayStatus)) {
+            message = "Your order has been marked as Delivered.";
+        } else {
+            message = "Your order status has been updated.";
+        }
+
+        return "Hello " + customerName + ",\n\n"
+                + "Order #" + String.format("%06d", orderId) + "\n"
+                + message + "\n"
+                + "Current status: " + displayStatus + "\n\n"
+                + "Please check your Melynal Trading orders page for the latest update.\n\n"
+                + "Thank you,\n"
+                + "Melynal Trading";
     }
 
     public static final class UpdateResult {

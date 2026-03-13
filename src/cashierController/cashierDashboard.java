@@ -346,7 +346,9 @@ public class cashierDashboard implements Initializable {
     private void openScene(Node source, String resource) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(resource));
         Stage stage = (Stage) source.getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        int width = "/Main/Login.fxml".equals(resource) ? 1000 : 1300;
+        int height = "/Main/Login.fxml".equals(resource) ? 600 : 800;
+        stage.setScene(new Scene(root, width, height));
         stage.show();
     }
 }

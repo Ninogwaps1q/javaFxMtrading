@@ -46,6 +46,16 @@
     -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.10), 22, 0.14, 0, 6);
 }
 
+.clean-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.clean-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
 .dashboard-card {
     -fx-padding: 18;
     -fx-background-color: #ffffff;

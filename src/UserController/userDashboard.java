@@ -61,7 +61,7 @@ public class userDashboard implements Initializable {
     private void homeHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserDashboard.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -69,7 +69,7 @@ public class userDashboard implements Initializable {
     private void aboutHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/About.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -77,7 +77,7 @@ public class userDashboard implements Initializable {
     private void profileHandlebtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/UserProfile.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
     
@@ -95,7 +95,7 @@ public class userDashboard implements Initializable {
     private void productHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userProduct.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -103,7 +103,7 @@ public class userDashboard implements Initializable {
     private void orderHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrder.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 
@@ -111,7 +111,7 @@ public class userDashboard implements Initializable {
     private void shopHandlebtn(MouseEvent event) throws IOException {
          Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userProduct.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 

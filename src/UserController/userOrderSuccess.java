@@ -17,6 +17,8 @@ import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -45,6 +47,9 @@ public class userOrderSuccess implements Initializable {
     @FXML private Label orderDateValue;
     @FXML private Label paymentMethodValue;
     @FXML private Label paymentRefValue;
+    @FXML private Label voucherCodeValue;
+    @FXML private Label discountValue;
+    @FXML private Label grossTotalValue;
     @FXML private Label totalValue;
     @FXML private Label statusValue;
     @FXML private Label itemCountValue;
@@ -54,6 +59,8 @@ public class userOrderSuccess implements Initializable {
     private int userId;
     private int currentOrderId;
     private String currentOrderStatus = OrderStatusUtil.STATUS_PENDING;
+    private String entryMessage = "";
+    private final List<OrderReviewRow> currentItems = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -70,45 +77,59 @@ public class userOrderSuccess implements Initializable {
             return;
         }
 
+        entryMessage = OrderSuccessSession.getEntryMessage();
         currentOrderId = orderId;
         loadOrder(orderId);
         OrderSuccessSession.clear();
     }
 
     private void loadOrder(int orderId) {
-        String orderSql = "SELECT o_id, total, status, created_at, payment_method, payment_ref "
+        String orderSql = "SELECT o_id, total, status, created_at, payment_method, payment_ref, "
+                + "COALESCE(gross_total, total) AS gross_total, "
+                + "COALESCE(discount_amount, 0) AS discount_amount, "
+                + "COALESCE(voucher_code, '') AS voucher_code "
                 + "FROM tbl_orders WHERE o_id = ? AND u_id = ?";
 
-        try (Connection conn = config.connectDB();
-             PreparedStatement orderPs = conn.prepareStatement(orderSql)) {
+        try (Connection conn = config.connectDB()) {
 
             ReviewDataUtil.ensureReviewTable(conn);
+            OrderSchemaUtil.ensurePaymentColumns(conn);
 
-            orderPs.setInt(1, orderId);
-            orderPs.setInt(2, userId);
+            try (PreparedStatement orderPs = conn.prepareStatement(orderSql)) {
+                orderPs.setInt(1, orderId);
+                orderPs.setInt(2, userId);
 
-            try (ResultSet rs = orderPs.executeQuery()) {
-                if (!rs.next()) {
-                    successMsg.setText("Order not found or access denied.");
-                    return;
+                try (ResultSet rs = orderPs.executeQuery()) {
+                    if (!rs.next()) {
+                        successMsg.setText("Order not found or access denied.");
+                        return;
+                    }
+
+                    currentOrderId = rs.getInt("o_id");
+                    currentOrderStatus = OrderStatusUtil.normalizeDisplayStatus(rs.getString("status"));
+
+                    orderIdValue.setText(String.format("#%06d", currentOrderId));
+                    totalValue.setText(formatCurrency(rs.getDouble("total")));
+                    statusValue.setText(currentOrderStatus);
+                    orderDateValue.setText(formatDateTime(rs.getString("created_at")));
+                    paymentMethodValue.setText(safeText(rs.getString("payment_method")));
+                    paymentRefValue.setText(safeText(rs.getString("payment_ref")));
+                    voucherCodeValue.setText(safeTextOrDash(rs.getString("voucher_code")));
+                    discountValue.setText(formatCurrency(rs.getDouble("discount_amount")));
+                    grossTotalValue.setText(formatCurrency(rs.getDouble("gross_total")));
+
+                    String initialMessage = entryMessage == null ? "" : entryMessage.trim();
+                    entryMessage = "";
+
+                    if (!initialMessage.isEmpty()) {
+                        successMsg.setText(initialMessage);
+                    } else if (OrderStatusUtil.isDelivered(currentOrderStatus)) {
+                        successMsg.setText("Order delivered. You can now review each product with stars, feedback, and an image.");
+                    } else {
+                        successMsg.setText("Order details loaded successfully.");
+                    }
+                    updateReviewHelp();
                 }
-
-                currentOrderId = rs.getInt("o_id");
-                currentOrderStatus = OrderStatusUtil.normalizeDisplayStatus(rs.getString("status"));
-
-                orderIdValue.setText(String.format("#%06d", currentOrderId));
-                totalValue.setText(formatCurrency(rs.getDouble("total")));
-                statusValue.setText(currentOrderStatus);
-                orderDateValue.setText(formatDateTime(rs.getString("created_at")));
-                paymentMethodValue.setText(safeText(rs.getString("payment_method")));
-                paymentRefValue.setText(safeText(rs.getString("payment_ref")));
-
-                if (OrderStatusUtil.isDelivered(currentOrderStatus)) {
-                    successMsg.setText("Order delivered. You can now review each product with stars, feedback, and an image.");
-                } else {
-                    successMsg.setText("Order details loaded successfully.");
-                }
-                updateReviewHelp();
             }
 
             loadItems(conn, currentOrderId);
@@ -130,6 +151,7 @@ public class userOrderSuccess implements Initializable {
                 + "ORDER BY oi.oi_id ASC";
 
         itemsBox.getChildren().clear();
+        currentItems.clear();
         int itemCount = 0;
 
         try (PreparedStatement ps = conn.prepareStatement(itemsSql)) {
@@ -141,7 +163,7 @@ public class userOrderSuccess implements Initializable {
                     int qty = rs.getInt("qty");
                     itemCount += qty;
 
-                    itemsBox.getChildren().add(buildItemCard(new OrderReviewRow(
+                    OrderReviewRow row = new OrderReviewRow(
                             rs.getInt("p_id"),
                             rs.getString("p_name"),
                             rs.getString("p_image"),
@@ -151,7 +173,9 @@ public class userOrderSuccess implements Initializable {
                             rs.getString("review_text"),
                             rs.getString("review_image"),
                             rs.getString("reviewed_at")
-                    )));
+                    );
+                    currentItems.add(row);
+                    itemsBox.getChildren().add(buildItemCard(row));
                 }
             }
         }
@@ -447,6 +471,86 @@ public class userOrderSuccess implements Initializable {
         return value;
     }
 
+    private String safeTextOrDash(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "-";
+        }
+        return value.trim();
+    }
+
+    @FXML
+    private void exportReceiptAction(ActionEvent event) {
+        if (currentOrderId <= 0) {
+            successMsg.setText("No order is loaded to export.");
+            return;
+        }
+
+        try {
+            Path exportDir = Paths.get(System.getProperty("user.dir"), "exports", "receipts");
+            Files.createDirectories(exportDir);
+
+            String fileName = "receipt_order_" + String.format("%06d", currentOrderId) + ".txt";
+            Path target = exportDir.resolve(fileName);
+            Files.write(target, buildReceiptText().getBytes());
+
+            successMsg.setText("Receipt exported to " + target.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            successMsg.setText("Failed to export receipt.");
+        }
+    }
+
+    private String buildReceiptText() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MELYNAL TRADING").append('\n');
+        sb.append("ORDER RECEIPT").append('\n');
+        sb.append(line('=', 44)).append('\n');
+        sb.append("Order ID : ").append(orderIdValue.getText()).append('\n');
+        sb.append("Date     : ").append(orderDateValue.getText()).append('\n');
+        sb.append("Status   : ").append(statusValue.getText()).append('\n');
+        sb.append("Payment  : ").append(paymentMethodValue.getText()).append('\n');
+        sb.append("Reference: ").append(paymentRefValue.getText()).append('\n');
+        sb.append("Voucher  : ").append(voucherCodeValue.getText()).append('\n');
+        sb.append(line('-', 44)).append('\n');
+        sb.append(String.format(Locale.ENGLISH, "%-22s %3s %15s%n", "Item", "Qty", "Subtotal"));
+        sb.append(line('-', 44)).append('\n');
+
+        if (currentItems.isEmpty()) {
+            sb.append("(No order items)").append('\n');
+        } else {
+            for (OrderReviewRow item : currentItems) {
+                sb.append(fitText(safeText(item.getProductName()), 22))
+                        .append(' ')
+                        .append(String.format(Locale.ENGLISH, "%3d %15s%n",
+                                item.getQuantity(),
+                                formatCurrency(item.getQuantity() * item.getUnitPrice())));
+            }
+        }
+
+        sb.append(line('-', 44)).append('\n');
+        sb.append("Gross Total : ").append(grossTotalValue.getText()).append('\n');
+        sb.append("Discount    : ").append(discountValue.getText()).append('\n');
+        sb.append("Payable     : ").append(totalValue.getText()).append('\n');
+        sb.append(line('=', 44)).append('\n');
+        return sb.toString();
+    }
+
+    private String fitText(String value, int width) {
+        String text = value == null ? "-" : value.trim();
+        if (text.length() > width) {
+            text = text.substring(0, Math.max(0, width - 3)) + "...";
+        }
+        return String.format("%-" + width + "s", text);
+    }
+
+    private String line(char c, int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
     @FXML
     private void goOrdersAction(ActionEvent event) throws IOException {
         openPage("/UserFXML/userOrder.fxml", event);
@@ -460,7 +564,7 @@ public class userOrderSuccess implements Initializable {
     private void openPage(String fxml, ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(fxml));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        stage.setScene(new Scene(root, 1300, 800));
         stage.show();
     }
 }

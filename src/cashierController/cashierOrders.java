@@ -83,8 +83,6 @@ public class cashierOrders implements Initializable {
     @FXML
     private Button updateStatusBtn;
     @FXML
-    private Button printOrderBtn;
-    @FXML
     private Label statusMessageLabel;
 
     private final ObservableList<String> orderStatusOptions =
@@ -148,8 +146,7 @@ public class cashierOrders implements Initializable {
         statusTypeCombo.getSelectionModel().selectFirst();
         statusTypeCombo.setDisable(true);
         updateStatusBtn.setDisable(true);
-        printOrderBtn.setDisable(true);
-        setStatusMessage("Select an order to update status or print details.", false);
+        setStatusMessage("Customer orders print automatically. Select an order to update status.", false);
 
         ordersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldRow, newRow) -> {
             if (newRow == null) {
@@ -157,13 +154,11 @@ public class cashierOrders implements Initializable {
                 statusTypeCombo.getSelectionModel().selectFirst();
                 statusTypeCombo.setDisable(true);
                 updateStatusBtn.setDisable(true);
-                printOrderBtn.setDisable(true);
-                setStatusMessage("Select an order to update status or print details.", false);
+                setStatusMessage("Customer orders print automatically. Select an order to update status.", false);
                 return;
             }
 
             selectedOrderId = newRow.getOrderId();
-            printOrderBtn.setDisable(false);
 
             String normalized = OrderStatusUtil.normalizeDisplayStatus(newRow.getStatus());
             if (orderStatusOptions.contains(normalized)) {
@@ -365,7 +360,9 @@ public class cashierOrders implements Initializable {
     private void openScene(ActionEvent event, String resource) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(resource));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root, 1000, 600));
+        int width = "/Main/Login.fxml".equals(resource) ? 1000 : 1300;
+        int height = "/Main/Login.fxml".equals(resource) ? 600 : 800;
+        stage.setScene(new Scene(root, width, height));
         stage.show();
     }
 
@@ -431,6 +428,9 @@ public class cashierOrders implements Initializable {
 
     private OrderPrintData loadOrderPrintData(int orderId) {
         String orderSql = "SELECT o.o_id, o.total, o.status, o.created_at, "
+                + "COALESCE(o.gross_total, o.total) AS gross_total, "
+                + "COALESCE(o.discount_amount, 0) AS discount_amount, "
+                + "COALESCE(o.voucher_code, '') AS voucher_code, "
                 + "COALESCE(a.u_name, 'Unknown') AS customer, "
                 + "COALESCE(a.u_phone, '-') AS phone, "
                 + "COALESCE(a.u_address, '-') AS address "
@@ -446,6 +446,9 @@ public class cashierOrders implements Initializable {
 
         try (Connection conn = config.connectDB()) {
             if (conn == null) return null;
+            addColumnIfMissing(conn, "tbl_orders", "gross_total", "REAL");
+            addColumnIfMissing(conn, "tbl_orders", "discount_amount", "REAL");
+            addColumnIfMissing(conn, "tbl_orders", "voucher_code", "TEXT");
 
             OrderPrintData data = null;
             try (PreparedStatement orderPs = conn.prepareStatement(orderSql)) {
@@ -459,6 +462,9 @@ public class cashierOrders implements Initializable {
                         data.customerAddress = safeText(rs.getString("address"));
                         data.createdAt = safeText(formatDateTime(rs.getString("created_at")));
                         data.total = rs.getDouble("total");
+                        data.grossTotal = rs.getDouble("gross_total");
+                        data.discountAmount = rs.getDouble("discount_amount");
+                        data.voucherCode = safeText(rs.getString("voucher_code"));
                     }
                 }
             }
@@ -513,6 +519,9 @@ public class cashierOrders implements Initializable {
         }
 
         sb.append(line('-', 42)).append('\n');
+        sb.append(String.format(Locale.ENGLISH, "Gross: %s%n", formatCurrency(data.grossTotal)));
+        sb.append(String.format(Locale.ENGLISH, "Discount: %s%n", formatCurrency(data.discountAmount)));
+        sb.append("Voucher: ").append(data.voucherCode).append('\n');
         sb.append(String.format(Locale.ENGLISH, "Total: %s%n", formatCurrency(data.total)));
         sb.append("Printed: ").append(LocalDateTime.now().format(PRINT_DATE_TIME)).append('\n');
         sb.append(line('=', 42)).append('\n');
@@ -621,6 +630,9 @@ public class cashierOrders implements Initializable {
         String customerPhone;
         String customerAddress;
         String createdAt;
+        String voucherCode = "-";
+        double grossTotal;
+        double discountAmount;
         double total;
         List<OrderPrintItem> items = new ArrayList<>();
     }
