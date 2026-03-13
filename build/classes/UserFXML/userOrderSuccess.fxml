@@ -17,7 +17,7 @@
                     <children>
                         <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                             <children>
-                                <Label styleClass="success-title" text="Order Successful" />
+                                <Label styleClass="success-title" text="Order Details" />
                                 <Label fx:id="successMsg" styleClass="success-subtitle" text="Your payment was processed successfully." wrapText="true" />
                             </children>
                         </VBox>
@@ -100,6 +100,7 @@
                         <VBox spacing="10.0" styleClass="surface order-items-card" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label styleClass="section-title" text="Order Details" />
+                                <Label fx:id="reviewHelpLabel" styleClass="hint-text" text="Reviews unlock after the order is marked as delivered." wrapText="true" />
                                 <ScrollPane fitToWidth="true" styleClass="clean-scroll" VBox.vgrow="ALWAYS">
                                     <content>
                                         <VBox fx:id="itemsBox" spacing="10.0" />

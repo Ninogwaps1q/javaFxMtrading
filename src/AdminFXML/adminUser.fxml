@@ -46,6 +46,14 @@
                             </graphic>
                         </Button>
 
+                        <Button maxWidth="Infinity" onAction="#inventoryButtonAction" styleClass="nav-btn" text="Inventory">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                                    <image><Image url="@../image/icons8-inventory-30.png" /></image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
                         <Button fx:id="salesBtn" maxWidth="Infinity" onMouseClicked="#saleHandleBtn" styleClass="nav-btn" text="Sales">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
@@ -58,6 +66,14 @@
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
                                     <image><Image url="@../image/icons8-user-24.png" /></image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                        <Button maxWidth="Infinity" onAction="#logsButtonAction" styleClass="nav-btn" text="Logs">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                                    <image><Image url="@../image/icons8-log-24.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>

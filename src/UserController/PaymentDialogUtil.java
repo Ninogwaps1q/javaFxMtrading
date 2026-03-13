@@ -1,9 +1,12 @@
 package UserController;
 
 import Model.CheckoutPayment;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.collections.FXCollections;
@@ -28,6 +31,12 @@ public final class PaymentDialogUtil {
     private static final double LARGE_DIALOG_HEIGHT = 560;
     private static final double LARGE_INPUT_WIDTH = 420;
     private static final double LARGE_INPUT_HEIGHT = 40;
+    private static final int GCASH_NUMBER_MAX_DIGITS = 11;
+    private static final int CARD_NUMBER_MAX_DIGITS = 19;
+    private static final int CVV_MAX_DIGITS = 4;
+    private static final int EXPIRY_MAX_DIGITS = 4;
+    private static final DateTimeFormatter REFERENCE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     private PaymentDialogUtil() {
     }
@@ -55,11 +64,14 @@ public final class PaymentDialogUtil {
         TextField gcashNumberField = new TextField();
         gcashNumberField.setPromptText("09123456789");
         configureLargeInput(gcashNumberField);
+        configureDigitInput(gcashNumberField, GCASH_NUMBER_MAX_DIGITS);
 
-        Label gcashRefLabel = new Label("Reference No.");
-        TextField gcashRefField = new TextField();
-        gcashRefField.setPromptText("Transaction reference");
-        configureLargeInput(gcashRefField);
+        Label referenceLabel = new Label("Reference No.");
+        TextField referenceField = new TextField();
+        referenceField.setPromptText("Auto-generated");
+        configureLargeInput(referenceField);
+        referenceField.setEditable(false);
+        referenceField.setFocusTraversable(false);
 
         Label cardNameLabel = new Label("Cardholder Name");
         TextField cardNameField = new TextField();
@@ -70,16 +82,19 @@ public final class PaymentDialogUtil {
         TextField cardNumberField = new TextField();
         cardNumberField.setPromptText("1234 5678 9012 3456");
         configureLargeInput(cardNumberField);
+        configureCardNumberInput(cardNumberField);
 
         Label expiryLabel = new Label("Expiry (MM/YY)");
         TextField expiryField = new TextField();
         expiryField.setPromptText("MM/YY");
         configureLargeInput(expiryField);
+        configureExpiryInput(expiryField);
 
         Label cvvLabel = new Label("CVV");
         PasswordField cvvField = new PasswordField();
         cvvField.setPromptText("3 or 4 digits");
         configureLargeInput(cvvField);
+        configureDigitInput(cvvField, CVV_MAX_DIGITS);
 
         Label errorLabel = new Label();
         errorLabel.getStyleClass().add("payment-error");
@@ -97,8 +112,8 @@ public final class PaymentDialogUtil {
         grid.add(gcashNumberLabel, 0, row);
         grid.add(gcashNumberField, 1, row++);
 
-        grid.add(gcashRefLabel, 0, row);
-        grid.add(gcashRefField, 1, row++);
+        grid.add(referenceLabel, 0, row);
+        grid.add(referenceField, 1, row++);
 
         grid.add(cardNameLabel, 0, row);
         grid.add(cardNameField, 1, row++);
@@ -120,11 +135,12 @@ public final class PaymentDialogUtil {
             String method = methodCombo.getValue();
             boolean gcash = METHOD_GCASH.equals(method);
             boolean card = METHOD_CARD.equals(method);
+            boolean needsReference = gcash || card;
 
             setVisibleManaged(gcashNumberLabel, gcash);
             setVisibleManaged(gcashNumberField, gcash);
-            setVisibleManaged(gcashRefLabel, gcash);
-            setVisibleManaged(gcashRefField, gcash);
+            setVisibleManaged(referenceLabel, needsReference);
+            setVisibleManaged(referenceField, needsReference);
 
             setVisibleManaged(cardNameLabel, card);
             setVisibleManaged(cardNameField, card);
@@ -135,6 +151,11 @@ public final class PaymentDialogUtil {
             setVisibleManaged(cvvLabel, card);
             setVisibleManaged(cvvField, card);
 
+            if (needsReference) {
+                referenceField.setText(generateReference(method));
+            } else {
+                referenceField.clear();
+            }
             errorLabel.setText("");
         };
 
@@ -148,7 +169,7 @@ public final class PaymentDialogUtil {
             ValidationResult validation = validate(
                     methodCombo.getValue(),
                     gcashNumberField.getText(),
-                    gcashRefField.getText(),
+                    referenceField.getText(),
                     cardNameField.getText(),
                     cardNumberField.getText(),
                     expiryField.getText(),
@@ -181,10 +202,60 @@ public final class PaymentDialogUtil {
         field.getStyleClass().add("payment-dialog-input");
     }
 
+    private static void configureDigitInput(TextField field, int maxDigits) {
+        field.textProperty().addListener((obs, oldValue, newValue) -> {
+            String digits = newValue == null ? "" : newValue.replaceAll("\\D", "");
+            if (digits.length() > maxDigits) {
+                digits = digits.substring(0, maxDigits);
+            }
+
+            if (!digits.equals(newValue)) {
+                field.setText(digits);
+                field.positionCaret(digits.length());
+            }
+        });
+    }
+
+    private static void configureCardNumberInput(TextField field) {
+        field.textProperty().addListener((obs, oldValue, newValue) -> {
+            String digits = newValue == null ? "" : newValue.replaceAll("\\D", "");
+            if (digits.length() > CARD_NUMBER_MAX_DIGITS) {
+                digits = digits.substring(0, CARD_NUMBER_MAX_DIGITS);
+            }
+
+            String formatted = formatCardDigits(digits);
+            if (!formatted.equals(newValue)) {
+                field.setText(formatted);
+                field.positionCaret(formatted.length());
+            }
+        });
+    }
+
+    private static void configureExpiryInput(TextField field) {
+        field.textProperty().addListener((obs, oldValue, newValue) -> {
+            String digits = newValue == null ? "" : newValue.replaceAll("\\D", "");
+            if (digits.length() > EXPIRY_MAX_DIGITS) {
+                digits = digits.substring(0, EXPIRY_MAX_DIGITS);
+            }
+
+            String formatted;
+            if (digits.length() <= 2) {
+                formatted = digits;
+            } else {
+                formatted = digits.substring(0, 2) + "/" + digits.substring(2);
+            }
+
+            if (!formatted.equals(newValue)) {
+                field.setText(formatted);
+                field.positionCaret(formatted.length());
+            }
+        });
+    }
+
     private static ValidationResult validate(
             String method,
             String gcashNumber,
-            String gcashReference,
+            String paymentReference,
             String cardholder,
             String cardNumber,
             String expiry,
@@ -201,16 +272,11 @@ public final class PaymentDialogUtil {
         if (METHOD_GCASH.equals(method)) {
             String normalized = normalizeGcashNumber(gcashNumber);
             if (normalized == null) {
-                return ValidationResult.error("Enter a valid GCash number (example: 09123456789).");
+                return ValidationResult.error("Enter a valid GCash number with exactly 11 digits.");
             }
 
-            String ref = gcashReference == null ? "" : gcashReference.trim();
-            if (!ref.matches("^[A-Za-z0-9]{6,24}$")) {
-                return ValidationResult.error("Enter a valid GCash reference (6-24 letters/numbers).");
-            }
-
-            String masked = normalized.substring(0, 4) + "****" + normalized.substring(8);
-            return ValidationResult.ok(new CheckoutPayment("GCash", masked + " | Ref " + ref.toUpperCase(Locale.ENGLISH)));
+            String ref = normalizeReference(paymentReference, METHOD_GCASH);
+            return ValidationResult.ok(new CheckoutPayment("GCash", ref));
         }
 
         String cleanName = cardholder == null ? "" : cardholder.trim();
@@ -241,23 +307,45 @@ public final class PaymentDialogUtil {
             return ValidationResult.error("CVV must be 3 or 4 digits.");
         }
 
-        String maskedCard = "**** **** **** " + digits.substring(digits.length() - 4);
-        return ValidationResult.ok(new CheckoutPayment("Credit Card", maskedCard));
+        String ref = normalizeReference(paymentReference, METHOD_CARD);
+        return ValidationResult.ok(new CheckoutPayment("Credit Card", ref));
     }
 
     private static String normalizeGcashNumber(String input) {
         if (input == null) return null;
         String digits = input.replaceAll("\\D", "");
 
-        if (digits.startsWith("639") && digits.length() == 12) {
-            digits = "0" + digits.substring(2);
-        }
-
         if (digits.startsWith("09") && digits.length() == 11) {
             return digits;
         }
 
         return null;
+    }
+
+    private static String normalizeReference(String reference, String method) {
+        String cleaned = reference == null ? "" : reference.trim().toUpperCase(Locale.ENGLISH);
+        if (!cleaned.isEmpty()) {
+            return cleaned;
+        }
+        return generateReference(method);
+    }
+
+    private static String generateReference(String method) {
+        String prefix = METHOD_GCASH.equals(method) ? "GC" : "CC";
+        String timestamp = LocalDateTime.now().format(REFERENCE_TIME_FORMAT);
+        int randomPart = ThreadLocalRandom.current().nextInt(1000, 10000);
+        return prefix + "-" + timestamp + "-" + randomPart;
+    }
+
+    private static String formatCardDigits(String digits) {
+        StringBuilder formatted = new StringBuilder();
+        for (int i = 0; i < digits.length(); i++) {
+            if (i > 0 && i % 4 == 0) {
+                formatted.append(' ');
+            }
+            formatted.append(digits.charAt(i));
+        }
+        return formatted.toString();
     }
 
     private static boolean passesLuhn(String digits) {

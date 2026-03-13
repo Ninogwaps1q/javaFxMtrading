@@ -2,6 +2,7 @@ package UserController;
 
 import Model.CartItem;
 import Model.CheckoutPayment;
+import config.SessionAuditUtil;
 import config.config;
 
 import java.io.File;
@@ -281,16 +282,14 @@ public class userCart {
             "DELETE FROM tbl_cart_items " +
             "WHERE c_id = (SELECT c_id FROM tbl_cart WHERE u_id=?) AND p_id=?";
 
-        try (Connection conn = config.connectDB();
-             PreparedStatement ps = conn.prepareStatement(del)) {
-
-            ps.setInt(1, userId);
-            ps.setInt(2, sel.getProductId());
-            ps.executeUpdate();
-
+        try {
+            int deleted = config.deleteRecord(del, userId, sel.getProductId());
+            if (deleted <= 0) {
+                cartMsg.setText("No cart item was removed.");
+                return;
+            }
             refreshCartUI();
             cartMsg.setText("Item removed from cart.");
-
         } catch (Exception e) {
             e.printStackTrace();
             cartMsg.setText("Failed to remove item.");
@@ -370,10 +369,7 @@ public class userCart {
                 }
             }
 
-            try (PreparedStatement ps = conn.prepareStatement(clearCart)) {
-                ps.setInt(1, userId);
-                ps.executeUpdate();
-            }
+            config.deleteRecord(conn, clearCart, userId);
 
             conn.commit();
             refreshCartUI();
@@ -432,7 +428,7 @@ public class userCart {
 
     @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
-        UserSession.clear();
+        SessionAuditUtil.logoutUserSession();
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));

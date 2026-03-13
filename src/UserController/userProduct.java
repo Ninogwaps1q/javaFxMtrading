@@ -3,6 +3,9 @@ package UserController;
 import Model.CartItem;
 import Model.CheckoutPayment;
 import Model.product;
+import Table.ProductReviewRow;
+import config.ReviewDataUtil;
+import config.SessionAuditUtil;
 import config.config;
 
 import java.io.File;
@@ -10,6 +13,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
@@ -286,7 +293,7 @@ public class userProduct {
         Label name = new Label(p.getName());
         name.getStyleClass().add("product-title");
 
-        Label price = new Label("PHP " + String.format("%.2f", p.getPrice()));
+        Label price = new Label(formatCurrency(p.getPrice()));
         price.getStyleClass().add("product-price");
 
         Label stock = new Label(p.getStock() > 0 ? ("Stock: " + p.getStock()) : "Out of stock");
@@ -325,6 +332,8 @@ public class userProduct {
     // DETAILS MODAL (GLASS + ANIM + SLIDER + BUY NOW)
     // =========================================================
     private void openDetailsModal(product p) {
+        ObservableList<ProductReviewRow> productReviews = loadProductReviews(p.getId());
+
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Product Details");
@@ -355,11 +364,15 @@ public class userProduct {
         Label type = new Label("Type: " + p.getType());
         type.getStyleClass().add("details-meta");
 
-        Label price = new Label("PHP " + String.format("%.2f", p.getPrice()));
+        Label price = new Label(formatCurrency(p.getPrice()));
         price.getStyleClass().add("details-price");
 
         Label stock = new Label("Stock: " + p.getStock());
         stock.getStyleClass().add("details-meta");
+
+        Label reviewSummary = new Label(buildReviewSummary(productReviews));
+        reviewSummary.setWrapText(true);
+        reviewSummary.getStyleClass().add("details-review-summary");
 
         Label descTitle = new Label("Description");
         descTitle.getStyleClass().add("details-section-title");
@@ -368,10 +381,13 @@ public class userProduct {
         desc.setWrapText(true);
         desc.getStyleClass().add("details-desc-text");
 
-        ScrollPane descScroll = new ScrollPane(desc);
-        descScroll.setFitToWidth(true);
-        descScroll.setPrefHeight(180);
-        descScroll.getStyleClass().add("details-desc");
+        VBox descBox = new VBox(desc);
+        descBox.getStyleClass().add("details-desc-box");
+
+        Label reviewTitle = new Label("Customer Reviews");
+        reviewTitle.getStyleClass().add("details-section-title");
+
+        VBox reviewList = buildProductReviewList(productReviews);
 
         Label qtyLabel = new Label("Quantity:");
         qtyLabel.getStyleClass().add("details-section-title");
@@ -426,12 +442,19 @@ public class userProduct {
         HBox actions = new HBox(12, add, buyNow, close);
         actions.setAlignment(Pos.CENTER_RIGHT);
 
-        VBox right = new VBox(12, title, type, price, stock, descTitle, descScroll, qtyBox, actions);
-        right.setPadding(new Insets(10));
-        right.setAlignment(Pos.TOP_LEFT);
+        VBox rightContent = new VBox(12, title, type, price, stock, reviewSummary,
+                descTitle, descBox, reviewTitle, reviewList, qtyBox, actions);
+        rightContent.setPadding(new Insets(10));
+        rightContent.setAlignment(Pos.TOP_LEFT);
+        rightContent.setFillWidth(true);
+
+        ScrollPane rightScroll = new ScrollPane(rightContent);
+        rightScroll.setFitToWidth(true);
+        rightScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        rightScroll.getStyleClass().add("clean-scroll");
 
         glass.setLeft(left);
-        glass.setCenter(right);
+        glass.setCenter(rightScroll);
         overlay.getChildren().add(glass);
 
         Scene scene = new Scene(overlay, 1000, 800);
@@ -573,6 +596,163 @@ public class userProduct {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private ObservableList<ProductReviewRow> loadProductReviews(int productId) {
+        ObservableList<ProductReviewRow> reviews = FXCollections.observableArrayList();
+
+        String sql = "SELECT COALESCE(a.u_name, 'Customer') AS reviewer_name, "
+                + "COALESCE(r.rating, 0) AS rating, "
+                + "COALESCE(r.review_text, '') AS review_text, "
+                + "COALESCE(r.review_image, '') AS review_image, "
+                + "COALESCE(r.created_at, '') AS created_at "
+                + "FROM tbl_review r "
+                + "LEFT JOIN tbl_acc a ON a.u_id = r.u_id "
+                + "WHERE r.p_id = ? "
+                + "ORDER BY datetime(COALESCE(r.created_at, '1970-01-01 00:00:00')) DESC, r.review_id DESC";
+
+        try (Connection conn = config.connectDB()) {
+            ReviewDataUtil.ensureReviewTable(conn);
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, productId);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        reviews.add(new ProductReviewRow(
+                                rs.getString("reviewer_name"),
+                                rs.getInt("rating"),
+                                rs.getString("review_text"),
+                                rs.getString("review_image"),
+                                rs.getString("created_at")
+                        ));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return reviews;
+    }
+
+    private VBox buildProductReviewList(ObservableList<ProductReviewRow> reviews) {
+        VBox reviewList = new VBox(10);
+        reviewList.getStyleClass().add("details-review-list");
+
+        if (reviews == null || reviews.isEmpty()) {
+            Label empty = new Label("No customer reviews yet for this product.");
+            empty.getStyleClass().add("hint-text");
+            reviewList.getChildren().add(empty);
+            return reviewList;
+        }
+
+        for (ProductReviewRow review : reviews) {
+            reviewList.getChildren().add(buildProductReviewCard(review));
+        }
+        return reviewList;
+    }
+
+    private VBox buildProductReviewCard(ProductReviewRow review) {
+        Label reviewerLabel = new Label(safeText(review.getReviewerName(), "Customer"));
+        reviewerLabel.getStyleClass().add("details-reviewer");
+
+        Label ratingLabel = new Label(formatStars(review.getRating()) + "  " + review.getRating() + "/5");
+        ratingLabel.getStyleClass().add("details-review-rating");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox header = new HBox(10, reviewerLabel, spacer, ratingLabel);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        VBox card = new VBox(8, header);
+        card.getStyleClass().add("details-review-card");
+
+        if (review.hasReviewText()) {
+            Label reviewText = new Label(review.getReviewText());
+            reviewText.setWrapText(true);
+            reviewText.getStyleClass().add("details-review-text");
+            card.getChildren().add(reviewText);
+        } else {
+            Label noText = new Label("No written review provided.");
+            noText.getStyleClass().add("order-item-meta");
+            card.getChildren().add(noText);
+        }
+
+        if (review.hasReviewImage()) {
+            ImageView reviewImage = new ImageView(loadImageSafe(review.getReviewImage()));
+            reviewImage.setFitWidth(96);
+            reviewImage.setFitHeight(96);
+            reviewImage.setPreserveRatio(true);
+            reviewImage.getStyleClass().add("image-preview");
+            card.getChildren().add(reviewImage);
+        }
+
+        if (review.getReviewedAt() != null && !review.getReviewedAt().trim().isEmpty()) {
+            Label dateLabel = new Label("Reviewed: " + formatDateTime(review.getReviewedAt()));
+            dateLabel.getStyleClass().add("details-review-meta");
+            card.getChildren().add(dateLabel);
+        }
+
+        return card;
+    }
+
+    private String buildReviewSummary(ObservableList<ProductReviewRow> reviews) {
+        if (reviews == null || reviews.isEmpty()) {
+            return "Customer rating: No reviews yet.";
+        }
+
+        double total = 0.0;
+        for (ProductReviewRow review : reviews) {
+            total += review.getRating();
+        }
+
+        double average = total / reviews.size();
+        return String.format(Locale.ENGLISH,
+                "Customer rating: %.1f/5 from %d review%s.",
+                average,
+                reviews.size(),
+                reviews.size() == 1 ? "" : "s");
+    }
+
+    private String formatStars(int rating) {
+        int stars = Math.max(0, Math.min(5, rating));
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < stars; i++) {
+            sb.append('\u2605');
+        }
+        return sb.toString();
+    }
+
+    private String safeText(String value, String fallback) {
+        if (value == null || value.trim().isEmpty()) {
+            return fallback;
+        }
+        return value.trim();
+    }
+
+    private String formatDateTime(String dbDate) {
+        if (dbDate == null || dbDate.trim().isEmpty()) {
+            return "-";
+        }
+
+        DateTimeFormatter input = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter output = DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm a", Locale.ENGLISH);
+
+        try {
+            return LocalDateTime.parse(dbDate, input).format(output);
+        } catch (Exception e) {
+            return dbDate;
+        }
+    }
+
+    private String formatCurrency(double value) {
+        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("en", "PH"));
+        String currency = format.format(value);
+        if (currency.startsWith("PHP")) return currency.replaceFirst("PHP", "\u20B1");
+        if (currency.startsWith("Php")) return currency.replaceFirst("Php", "\u20B1");
+        return currency;
     }
 
     // =========================================================
@@ -772,19 +952,18 @@ public class userProduct {
             "DELETE FROM tbl_cart_items " +
             "WHERE c_id = (SELECT c_id FROM tbl_cart WHERE u_id=?) AND p_id=?";
 
-        try (Connection conn = config.connectDB();
-             PreparedStatement ps = conn.prepareStatement(del)) {
-
-            ps.setInt(1, userId);
-            ps.setInt(2, sel.getProductId());
-            ps.executeUpdate();
-
+        try {
+            int deleted = config.deleteRecord(del, userId, sel.getProductId());
+            if (deleted <= 0) {
+                cartMsg.setText("No cart item was removed.");
+                return;
+            }
             loadCartFromDB();
             updateTotal();
             updateCartBadge();
-
         } catch (Exception e) {
             e.printStackTrace();
+            cartMsg.setText("Failed to remove item.");
         }
     }
 
@@ -867,10 +1046,7 @@ public class userProduct {
                 }
             }
 
-            try (PreparedStatement ps = conn.prepareStatement(clearCart)) {
-                ps.setInt(1, userId);
-                ps.executeUpdate();
-            }
+            config.deleteRecord(conn, clearCart, userId);
 
             conn.commit();
 
@@ -940,7 +1116,7 @@ public class userProduct {
     }
 
     @FXML private void handleLogoutBtn(MouseEvent event) throws IOException {
-        UserSession.clear();
+        SessionAuditUtil.logoutUserSession();
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));

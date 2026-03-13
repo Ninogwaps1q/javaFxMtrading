@@ -49,6 +49,16 @@
                         </ImageView>
                      </graphic>
                   </Button>
+
+                  <Button maxWidth="Infinity" onAction="#logsButtonAction" styleClass="nav-btn" text="Logs">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-log-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
             </VBox>
 
@@ -157,9 +167,9 @@
                         <TableView fx:id="recentOrdersTable" prefHeight="373.0" prefWidth="983.0" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="recentOrderIdCol" prefWidth="100.0" text="Order ID" />
-                              <TableColumn fx:id="recentCustomerCol" prefWidth="240.0" text="Customer" />
+                              <TableColumn fx:id="recentCustomerCol" prefWidth="225.0" text="Customer" />
                               <TableColumn fx:id="recentAmountCol" prefWidth="138.0" text="Amount" />
-                              <TableColumn fx:id="recentStatusCol" prefWidth="135.0" text="Status" />
+                              <TableColumn fx:id="recentStatusCol" prefWidth="150.0" text="Status" />
                               <TableColumn fx:id="recentDateCol" prefWidth="125.0" text="Date" />
                            </columns>
                         </TableView>

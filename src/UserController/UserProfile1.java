@@ -1,5 +1,7 @@
 package UserController;
 
+import config.ImageStorageUtil;
+import config.SessionAuditUtil;
 import config.config;
 import java.io.File;
 import java.io.IOException;
@@ -156,23 +158,8 @@ public class UserProfile1 implements Initializable {
         if (file == null) return;
 
         try {
-            Path uploadsDir = Paths.get(System.getProperty("user.dir"), "uploads");
-            if (!Files.exists(uploadsDir)) Files.createDirectories(uploadsDir);
-
-            String ext = "";
-            String n = file.getName();
-            int dot = n.lastIndexOf(".");
-            if (dot >= 0) ext = n.substring(dot);
-
-            String newFileName = "img_" + System.currentTimeMillis() + ext;
-            Path targetPath = uploadsDir.resolve(newFileName);
-
-            Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            // Save relative path
-            imagePath = "uploads/" + newFileName;
-
-            profileImage.setImage(new Image(targetPath.toUri().toString(), true));
+            imagePath = ImageStorageUtil.copyProfileImage(file);
+            loadProfileImage(imagePath);
             updateUserImage(imagePath);
 
         } catch (Exception ex) {
@@ -314,7 +301,7 @@ public class UserProfile1 implements Initializable {
         stage.setScene(new Scene(root, 1000, 600));
         stage.show();
     }
-    @FXML private void handleLogoutBtn(MouseEvent event) throws IOException { UserSession.clear(); 
+    @FXML private void handleLogoutBtn(MouseEvent event) throws IOException { SessionAuditUtil.logoutUserSession();
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));

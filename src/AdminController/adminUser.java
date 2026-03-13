@@ -1,18 +1,19 @@
 package AdminController;
 
 import Table.User;
+import config.ImageStorageUtil;
+import config.SessionAuditUtil;
 import config.config;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -177,21 +178,8 @@ public class adminUser implements Initializable {
         if (file == null) return;
 
         try {
-            File uploadsDir = new File("uploads");
-            if (!uploadsDir.exists()) uploadsDir.mkdirs();
-
-            String ext = "";
-            String fname = file.getName();
-            int dot = fname.lastIndexOf(".");
-            if (dot >= 0) ext = fname.substring(dot);
-
-            String newFileName = "img_" + System.currentTimeMillis() + ext;
-            Path targetPath = Paths.get(uploadsDir.getAbsolutePath(), newFileName);
-
-            Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            imagePath = "uploads/" + newFileName;
-            profileImage.setImage(new Image(targetPath.toUri().toString(), true));
+            imagePath = ImageStorageUtil.copyProfileImage(file);
+            loadImageToView(imagePath);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -202,19 +190,22 @@ public class adminUser implements Initializable {
     // ================= ADD USER =================
     @FXML
     private void addUser(ActionEvent event) {
+        UserFormInput input = readValidatedUserForm(false);
+        if (input == null) return;
+
         String sql = "INSERT INTO tbl_acc(u_name,u_email,u_uname,u_role,u_status,u_image,u_phone,u_address) VALUES(?,?,?,?,?,?,?,?)";
 
         try (Connection conn = config.connectDB();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, nameField.getText().trim());
-            ps.setString(2, emailField.getText().trim());
-            ps.setString(3, usernameField.getText().trim());
-            ps.setString(4, roleCombo.getValue());
-            ps.setString(5, statusCombo.getValue());
-            ps.setString(6, imagePath);
-            ps.setString(7, phoneField.getText().trim());
-            ps.setString(8, addressField.getText().trim());
+            ps.setString(1, input.name);
+            ps.setString(2, input.email);
+            ps.setString(3, input.username);
+            ps.setString(4, input.role);
+            ps.setString(5, input.status);
+            ps.setString(6, input.imagePath);
+            ps.setString(7, input.phone);
+            ps.setString(8, input.address);
 
             ps.executeUpdate();
             loadUsers();
@@ -236,19 +227,22 @@ public class adminUser implements Initializable {
             return;
         }
 
+        UserFormInput input = readValidatedUserForm(true);
+        if (input == null) return;
+
         String sql = "UPDATE tbl_acc SET u_name=?,u_email=?,u_uname=?,u_role=?,u_status=?,u_image=?,u_phone=?,u_address=? WHERE u_id=?";
 
         try (Connection conn = config.connectDB();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, nameField.getText().trim());
-            ps.setString(2, emailField.getText().trim());
-            ps.setString(3, usernameField.getText().trim());
-            ps.setString(4, roleCombo.getValue());
-            ps.setString(5, statusCombo.getValue());
-            ps.setString(6, imagePath);
-            ps.setString(7, phoneField.getText().trim());
-            ps.setString(8, addressField.getText().trim());
+            ps.setString(1, input.name);
+            ps.setString(2, input.email);
+            ps.setString(3, input.username);
+            ps.setString(4, input.role);
+            ps.setString(5, input.status);
+            ps.setString(6, input.imagePath);
+            ps.setString(7, input.phone);
+            ps.setString(8, input.address);
             ps.setInt(9, selectedId);
 
             ps.executeUpdate();
@@ -273,17 +267,15 @@ public class adminUser implements Initializable {
 
         String sql = "DELETE FROM tbl_acc WHERE u_id=?";
 
-        try (Connection conn = config.connectDB();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, selectedId);
-            ps.executeUpdate();
-
+        try {
+            int deleted = config.deleteRecord(sql, selectedId);
+            if (deleted <= 0) {
+                new Alert(Alert.AlertType.WARNING, "No user was deleted.").showAndWait();
+                return;
+            }
             loadUsers();
             clear();
-
             new Alert(Alert.AlertType.INFORMATION, "User Deleted!").showAndWait();
-
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Failed to delete user!").showAndWait();
@@ -301,6 +293,79 @@ public class adminUser implements Initializable {
         profileImage.setImage(null);
         imagePath = "";
         selectedId = 0;
+    }
+
+    private UserFormInput readValidatedUserForm(boolean isUpdate) {
+        config con = new config();
+
+        String name = safe(nameField.getText());
+        String email = safe(emailField.getText()).toLowerCase(Locale.ENGLISH);
+        String username = safe(usernameField.getText());
+        String phone = safe(phoneField.getText());
+        String address = safe(addressField.getText());
+        String role = safe(roleCombo.getValue());
+        String status = safe(statusCombo.getValue());
+
+        if (name.isEmpty() || email.isEmpty() || username.isEmpty()
+                || phone.isEmpty() || address.isEmpty() || role.isEmpty() || status.isEmpty()) {
+            showValidationAlert("All fields except the image are required.");
+            return null;
+        }
+
+        if (name.length() < 2) {
+            showValidationAlert("Full name must be at least 2 characters.");
+            return null;
+        }
+
+        if (!isValidGmailAddress(email)) {
+            showValidationAlert("Email must be a valid @gmail.com address.");
+            return null;
+        }
+
+        if (!username.matches("^[A-Za-z0-9._-]{3,20}$")) {
+            showValidationAlert("Username must be 3-20 characters and use only letters, numbers, dot, underscore, or dash.");
+            return null;
+        }
+
+        if (!phone.matches("^09\\d{9}$")) {
+            showValidationAlert("Phone number must be 11 digits and start with 09.");
+            return null;
+        }
+
+        if (address.length() < 5) {
+            showValidationAlert("Address must be at least 5 characters.");
+            return null;
+        }
+
+        String emailCheck = isUpdate
+                ? "SELECT 1 FROM tbl_acc WHERE LOWER(u_email) = LOWER(?) AND u_id <> ?"
+                : "SELECT 1 FROM tbl_acc WHERE LOWER(u_email) = LOWER(?)";
+        if (isUpdate ? con.recordExists(emailCheck, email, selectedId) : con.recordExists(emailCheck, email)) {
+            showValidationAlert("Email already exists.");
+            return null;
+        }
+
+        String usernameCheck = isUpdate
+                ? "SELECT 1 FROM tbl_acc WHERE LOWER(u_uname) = LOWER(?) AND u_id <> ?"
+                : "SELECT 1 FROM tbl_acc WHERE LOWER(u_uname) = LOWER(?)";
+        if (isUpdate ? con.recordExists(usernameCheck, username, selectedId) : con.recordExists(usernameCheck, username)) {
+            showValidationAlert("Username already exists.");
+            return null;
+        }
+
+        return new UserFormInput(name, email, username, phone, address, role, status, imagePath);
+    }
+
+    private boolean isValidGmailAddress(String email) {
+        return email.matches("^[A-Za-z0-9._%+-]+@gmail\\.com$");
+    }
+
+    private void showValidationAlert(String message) {
+        new Alert(Alert.AlertType.WARNING, message).showAndWait();
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value.trim();
     }
 
     // ================= NAVIGATION =================
@@ -321,6 +386,14 @@ public class adminUser implements Initializable {
     }
 
     @FXML
+    private void inventoryButtonAction(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminInventory.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
+    @FXML
     private void saleHandleBtn(MouseEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminSale.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -329,7 +402,16 @@ public class adminUser implements Initializable {
     }
 
     @FXML
+    private void logsButtonAction(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/AdminFXML/adminLogs.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
+    @FXML
     private void logoutButtonAction(ActionEvent event) throws IOException {
+        SessionAuditUtil.logoutAdminSession();
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));
@@ -339,5 +421,28 @@ public class adminUser implements Initializable {
     @FXML
     private void userButtonAction(ActionEvent event) {
         // already here
+    }
+
+    private static class UserFormInput {
+        final String name;
+        final String email;
+        final String username;
+        final String phone;
+        final String address;
+        final String role;
+        final String status;
+        final String imagePath;
+
+        UserFormInput(String name, String email, String username, String phone,
+                String address, String role, String status, String imagePath) {
+            this.name = name;
+            this.email = email;
+            this.username = username;
+            this.phone = phone;
+            this.address = address;
+            this.role = role;
+            this.status = status;
+            this.imagePath = imagePath == null ? "" : imagePath.trim();
+        }
     }
 }

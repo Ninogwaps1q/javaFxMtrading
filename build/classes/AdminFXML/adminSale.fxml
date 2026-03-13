@@ -49,6 +49,16 @@
                      </graphic>
                   </Button>
 
+                  <Button fx:id="inventoryBtn" maxWidth="Infinity" onAction="#inventoryButtonAction" styleClass="nav-btn" text="Inventory">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-inventory-30.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
                   <Button fx:id="salesBtn" maxWidth="Infinity" onAction="#orderButtonAction" styleClass="nav-btn" text="Sales">
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20">
@@ -64,6 +74,16 @@
                         <ImageView fitHeight="20" fitWidth="20">
                            <image>
                               <Image url="@../image/icons8-user-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
+                  <Button maxWidth="Infinity" onAction="#logsButtonAction" styleClass="nav-btn" text="Logs">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-log-24.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -98,7 +118,7 @@
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
                   <Label styleClass="muted-text" text="Set Status:" />
-                  <ComboBox fx:id="statusTypeCombo" prefWidth="160.0" promptText="Status Type" />
+                  <ComboBox fx:id="statusTypeCombo" prefWidth="190.0" promptText="Status Type" />
                   <Button fx:id="updateStatusBtn" onAction="#updateOrderStatusAction" styleClass="btn-primary update-status-btn" text="Update Status" />
                   <Button fx:id="printOrderBtn" onAction="#printOrderDetailsAction" styleClass="btn-secondary" text="Print Order Details" />
                   <Region HBox.hgrow="ALWAYS" />
@@ -109,9 +129,9 @@
             <TableView fx:id="ordersTable" prefHeight="51.0" prefWidth="740.0" VBox.vgrow="ALWAYS">
                <columns>
                   <TableColumn fx:id="orderIdCol" prefWidth="91.0" text="Order ID" />
-                  <TableColumn fx:id="customerCol" prefWidth="314.0" text="Customer" />
+                  <TableColumn fx:id="customerCol" prefWidth="252.0" text="Customer" />
                   <TableColumn fx:id="amountCol" prefWidth="102.0" text="Amount" />
-                  <TableColumn fx:id="statusCol" prefWidth="83.0" text="Status" />
+                  <TableColumn fx:id="statusCol" prefWidth="145.0" text="Status" />
                   <TableColumn fx:id="dateCol" prefWidth="146.0" text="Date" />
                </columns>
             </TableView>

@@ -6,6 +6,9 @@
 package AdminController;
 
 import Table.OrderRow;
+import config.OrderStatusUtil;
+import config.OrderUpdateService;
+import config.SessionAuditUtil;
 import config.config;
 import java.io.IOException;
 import java.net.URL;
@@ -69,6 +72,8 @@ public class adminSale implements Initializable {
     @FXML
     private Button productBtn;
     @FXML
+    private Button inventoryBtn;
+    @FXML
     private Button salesBtn;
     @FXML
     private Button userBtn;
@@ -98,7 +103,11 @@ public class adminSale implements Initializable {
     private Label statusMessageLabel;
 
     private final ObservableList<String> orderStatusOptions =
-            FXCollections.observableArrayList("Shipped", "Delivered", "Cancelled");
+            FXCollections.observableArrayList(
+                    OrderStatusUtil.STATUS_SHIPPED,
+                    OrderStatusUtil.STATUS_READY_TO_DELIVER,
+                    OrderStatusUtil.STATUS_CANCELLED
+            );
     private static final DateTimeFormatter DB_DATE_TIME =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final DateTimeFormatter UI_DATE =
@@ -125,6 +134,10 @@ public class adminSale implements Initializable {
         if (isCashierRole()) {
             textPanel.setText("Cashier Panel");
             if (productBtn != null) productBtn.setText("Orders");
+            if (inventoryBtn != null) {
+                inventoryBtn.setVisible(false);
+                inventoryBtn.setManaged(false);
+            }
             if (userBtn != null) {
                 userBtn.setVisible(false);
                 userBtn.setManaged(false);
@@ -134,6 +147,10 @@ public class adminSale implements Initializable {
 
         textPanel.setText("Admin Panel");
         if (productBtn != null) productBtn.setText("Products");
+        if (inventoryBtn != null) {
+            inventoryBtn.setVisible(true);
+            inventoryBtn.setManaged(true);
+        }
         if (userBtn != null) {
             userBtn.setVisible(true);
             userBtn.setManaged(true);
@@ -164,7 +181,7 @@ public class adminSale implements Initializable {
 
                 Label badge = new Label(item);
                 badge.getStyleClass().add("status-badge");
-                badge.getStyleClass().add(statusClass(item));
+                badge.getStyleClass().add(OrderStatusUtil.statusCssClass(item));
                 setText(null);
                 setGraphic(badge);
             }
@@ -176,6 +193,7 @@ public class adminSale implements Initializable {
     private void setupStatusEditor() {
         statusTypeCombo.setItems(orderStatusOptions);
         statusTypeCombo.getSelectionModel().selectFirst();
+        statusTypeCombo.setDisable(true);
         updateStatusBtn.setDisable(true);
         if (printOrderBtn != null) printOrderBtn.setDisable(true);
         setStatusMessage("Select an order to update status or print details.", false);
@@ -183,6 +201,8 @@ public class adminSale implements Initializable {
         ordersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldRow, newRow) -> {
             if (newRow == null) {
                 selectedOrderId = null;
+                statusTypeCombo.getSelectionModel().selectFirst();
+                statusTypeCombo.setDisable(true);
                 updateStatusBtn.setDisable(true);
                 if (printOrderBtn != null) printOrderBtn.setDisable(true);
                 setStatusMessage("Select an order to update status or print details.", false);
@@ -190,15 +210,32 @@ public class adminSale implements Initializable {
             }
 
             selectedOrderId = newRow.getOrderId();
-            updateStatusBtn.setDisable(false);
             if (printOrderBtn != null) printOrderBtn.setDisable(false);
 
-            String normalized = normalizeOrderStatus(newRow.getStatus());
+            String normalized = OrderStatusUtil.normalizeDisplayStatus(newRow.getStatus());
             if (orderStatusOptions.contains(normalized)) {
                 statusTypeCombo.setValue(normalized);
+            } else {
+                statusTypeCombo.getSelectionModel().clearSelection();
             }
 
-            setStatusMessage(String.format("Selected order #%06d.", selectedOrderId), false);
+            boolean canUpdate = OrderStatusUtil.canStaffUpdate(newRow.getStatus());
+            statusTypeCombo.setDisable(!canUpdate);
+            updateStatusBtn.setDisable(!canUpdate);
+
+            if (OrderStatusUtil.isDelivered(newRow.getStatus())) {
+                setStatusMessage(String.format(
+                        "Order #%06d was already received by the customer and marked Delivered.",
+                        selectedOrderId
+                ), false);
+            } else if (OrderStatusUtil.isCancelled(newRow.getStatus())) {
+                setStatusMessage(String.format(
+                        "Order #%06d is cancelled and can no longer be updated.",
+                        selectedOrderId
+                ), false);
+            } else {
+                setStatusMessage(String.format("Selected order #%06d.", selectedOrderId), false);
+            }
         });
     }
 
@@ -218,7 +255,7 @@ public class adminSale implements Initializable {
                         rs.getInt("o_id"),
                         rs.getString("customer"),
                         rs.getDouble("total"),
-                        rs.getString("status"),
+                        OrderStatusUtil.normalizeDisplayStatus(rs.getString("status")),
                         formatDate(rs.getString("created_at"))
                 ));
             }
@@ -257,6 +294,15 @@ public class adminSale implements Initializable {
     }
 
     @FXML
+    private void inventoryButtonAction(ActionEvent event) throws IOException {
+        if (isCashierRole()) {
+            setStatusMessage("Cashier account cannot access inventory management.", true);
+            return;
+        }
+        openScene(event, "/AdminFXML/adminInventory.fxml");
+    }
+
+    @FXML
     private void userButtonAction(ActionEvent event) throws IOException {
         if (isCashierRole()) {
             setStatusMessage("Cashier account cannot access user management.", true);
@@ -266,8 +312,17 @@ public class adminSale implements Initializable {
     }
 
     @FXML
+    private void logsButtonAction(ActionEvent event) throws IOException {
+        if (isCashierRole()) {
+            openScene(event, "/CashierFXML/CashierLogs.fxml");
+            return;
+        }
+        openScene(event, "/AdminFXML/adminLogs.fxml");
+    }
+
+    @FXML
     private void logoutButtonAction(ActionEvent event) throws IOException {
-        AdminSession.clear();
+        SessionAuditUtil.logoutAdminSession();
         openScene(event, "/Main/Login.fxml");
     }
 
@@ -293,30 +348,35 @@ public class adminSale implements Initializable {
             return;
         }
 
-        String sql = "UPDATE tbl_orders SET status=?, handled_by_email=?, handled_by_name=?, "
-                + "handled_by_role=?, handled_at=datetime('now') WHERE o_id=?";
+        OrderUpdateService.UpdateResult result = OrderUpdateService.updateOrderStatus(
+                selectedOrderId,
+                newStatus,
+                sessionEmail(),
+                sessionName(),
+                sessionRole()
+        );
 
-        try (Connection conn = config.connectDB();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, newStatus.trim());
-            ps.setString(2, sessionEmail());
-            ps.setString(3, sessionName());
-            ps.setString(4, sessionRole());
-            ps.setInt(5, selectedOrderId);
-            int updated = ps.executeUpdate();
-
-            if (updated > 0) {
-                int orderId = selectedOrderId;
-                loadOrders();
-                setStatusMessage(String.format("Order #%06d updated to %s.", orderId, newStatus), false);
-            } else {
-                setStatusMessage("No matching order was updated.", true);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            setStatusMessage("Failed to update order status.", true);
+        if (!result.isSuccess()) {
+            setStatusMessage(result.getMessage(), true);
+            return;
         }
+
+        int orderId = selectedOrderId;
+        loadOrders();
+        if (result.isRestoredStock()) {
+            setStatusMessage(String.format(
+                    "Order #%06d updated to %s. Product stock was returned.",
+                    orderId,
+                    result.getStatus()
+            ), false);
+            return;
+        }
+
+        String message = String.format("Order #%06d updated to %s.", orderId, result.getStatus());
+        if (result.getNotificationNote() != null && !result.getNotificationNote().trim().isEmpty()) {
+            message += " " + result.getNotificationNote();
+        }
+        setStatusMessage(message, false);
     }
 
     @FXML
@@ -387,23 +447,6 @@ public class adminSale implements Initializable {
                 return null;
             }
         }
-    }
-
-    private String statusClass(String status) {
-        String s = status.toLowerCase(Locale.ENGLISH);
-        if (s.contains("deliver")) return "status-delivered";
-        if (s.contains("ship")) return "status-shipped";
-        if (s.contains("cancel")) return "status-cancelled";
-        return "status-pending";
-    }
-
-    private String normalizeOrderStatus(String status) {
-        if (status == null) return "";
-        String s = status.trim().toLowerCase(Locale.ENGLISH);
-        if (s.contains("ship")) return "Shipped";
-        if (s.contains("deliver")) return "Delivered";
-        if (s.contains("cancel")) return "Cancelled";
-        return status.trim();
     }
 
     private void selectOrderById(int orderId) {

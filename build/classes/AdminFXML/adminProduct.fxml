@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
@@ -10,16 +11,14 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminProduct">
+<AnchorPane fx:id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminProduct">
 
    <children>
-
-      <!-- ================= SIDEBAR ================= -->
       <VBox fx:id="panel" alignment="TOP_CENTER" fillWidth="true" prefWidth="220.0" spacing="12.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-
          <children>
             <ImageView fx:id="logo" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -51,6 +50,16 @@
                      </graphic>
                   </Button>
 
+                  <Button maxWidth="Infinity" onAction="#inventoryButtonAction" styleClass="nav-btn" text="Inventory">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-inventory-30.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
                   <Button fx:id="salesBtn" maxWidth="Infinity" onMouseClicked="#saleHandleBtn" styleClass="nav-btn" text="Sales">
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20">
@@ -70,6 +79,16 @@
                         </ImageView>
                      </graphic>
                   </Button>
+
+                  <Button maxWidth="Infinity" onAction="#logsButtonAction" styleClass="nav-btn" text="Logs">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-log-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
             </VBox>
 
@@ -84,53 +103,83 @@
                   </ImageView>
                </graphic>
             </Button>
-
          </children>
       </VBox>
 
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" prefHeight="560.0" prefWidth="740.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <content>
+            <VBox spacing="14.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <Label styleClass="page-title" text="Product Catalog" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="inventoryMetaLabel" styleClass="muted-text" text="Showing 0 of 0 products" />
+                        <Button onAction="#refreshInventoryAction" styleClass="btn-secondary" text="Refresh" />
+                     </children>
+                  </HBox>
 
-      <!-- ================= TITLE ================= -->
-      <Label layoutX="240.0" layoutY="20.0" styleClass="page-title" text="Products" />
+                  <Label styleClass="muted-text" text="Add new products here. Use the Inventory navbar for stock updates and deeper inventory controls." wrapText="true" />
 
+                  <HBox spacing="14.0">
+                     <children>
+                        <VBox prefWidth="320.0" spacing="12.0" styleClass="surface dashboard-card">
+                           <children>
+                              <Label styleClass="section-title" text="Add Product" />
+                              <TextField fx:id="nameField" promptText="Product Name" />
+                              <ComboBox fx:id="typeCombo" promptText="Type" />
+                              <TextField fx:id="priceField" promptText="Price" />
+                              <TextField fx:id="stockField" promptText="Starting Stock" />
+                              <TextArea fx:id="descField" prefHeight="96.0" promptText="Description" wrapText="true" />
 
-      <!-- ================= PRODUCT FORM ================= -->
-      <TextField fx:id="nameField" layoutX="240.0" layoutY="61.0" prefWidth="200" promptText="Product Name" />
+                              <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                 <children>
+                                    <ImageView fx:id="productImage" fitHeight="92.0" fitWidth="92.0" preserveRatio="true" styleClass="image-preview" />
+                                    <VBox spacing="8.0">
+                                       <children>
+                                          <Label styleClass="muted-text" text="Product Image" />
+                                          <Button onAction="#chooseImage" styleClass="btn-secondary" text="Choose Image" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
 
-      <ComboBox fx:id="typeCombo" layoutX="240.0" layoutY="106.0" prefWidth="200" promptText="Type" />
+                              <HBox spacing="8.0">
+                                 <children>
+                                    <Button maxWidth="Infinity" onAction="#addProduct" styleClass="btn-primary" text="Add Product" HBox.hgrow="ALWAYS" />
+                                    <Button maxWidth="Infinity" onAction="#deleteProduct" styleClass="btn-danger" text="Delete" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
 
-      <TextField fx:id="priceField" layoutX="240" layoutY="160" prefWidth="200" promptText="Price" />
+                              <Button maxWidth="Infinity" onAction="#clearFormAction" styleClass="btn-secondary" text="Clear Form" />
+                              <Label fx:id="statusMessageLabel" styleClass="muted-text" text="" wrapText="true" />
+                           </children>
+                        </VBox>
 
-      <TextField fx:id="stockField" layoutX="240.0" layoutY="210.0" prefWidth="200" promptText="Stock" />
+                        <VBox spacing="12.0" styleClass="surface dashboard-card" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <TextField fx:id="searchField" promptText="Search by product, type, or description" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
 
-      <TextArea fx:id="descField" layoutX="240.0" layoutY="259.0" prefHeight="70" prefWidth="200" promptText="Description" />
-
-
-      <!-- ================= IMAGE ================= -->
-      <ImageView fx:id="productImage" fitHeight="120" fitWidth="120" layoutX="470" layoutY="80" styleClass="image-preview" />
-
-      <Button layoutX="470" layoutY="210" onAction="#chooseImage" styleClass="btn-secondary" text="Choose Image" />
-
-
-      <!-- ================= CRUD BUTTONS ================= -->
-      <Button layoutX="245.0" layoutY="342.0" onAction="#addProduct" prefHeight="37.0" prefWidth="86.0" styleClass="btn-primary" text="Add" />
-
-      <Button layoutX="340.0" layoutY="341.0" onAction="#updateProduct" prefHeight="39.0" prefWidth="92.0" styleClass="btn-secondary" text="Update" />
-
-      <Button layoutX="440.0" layoutY="342.0" onAction="#deleteProduct" prefHeight="37.0" prefWidth="92.0" styleClass="btn-danger" text="Delete" />
-
-
-      <!-- ================= TABLE ================= -->
-      <TableView fx:id="table" layoutX="240.0" layoutY="394.0" prefHeight="193.0" prefWidth="540">
-
-         <columns>
-            <TableColumn fx:id="colId" prefWidth="50" text="ID" />
-            <TableColumn fx:id="colName" prefWidth="185.0" text="Name" />
-            <TableColumn fx:id="colType" prefWidth="100.0" text="Type" />
-            <TableColumn fx:id="colStock" prefWidth="103.0" text="Stock" />
-            <TableColumn fx:id="colPrice" prefWidth="100.0" text="Price" />
-         </columns>
-
-      </TableView>
-
+                              <TableView fx:id="table" prefHeight="480.0" prefWidth="620.0">
+                                 <columns>
+                                    <TableColumn fx:id="colId" prefWidth="62.0" text="ID" />
+                                    <TableColumn fx:id="colName" prefWidth="210.0" text="Name" />
+                                    <TableColumn fx:id="colType" prefWidth="120.0" text="Type" />
+                                    <TableColumn fx:id="colStock" prefWidth="90.0" text="Stock" />
+                                    <TableColumn fx:id="colPrice" prefWidth="120.0" text="Price" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
    </children>
 </AnchorPane>

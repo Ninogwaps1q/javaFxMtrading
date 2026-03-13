@@ -1,6 +1,8 @@
 package UserController;
 
 import Table.UserOrderRow;
+import config.OrderStatusUtil;
+import config.SessionAuditUtil;
 import config.config;
 import java.io.IOException;
 import java.net.URL;
@@ -22,6 +24,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -38,9 +41,12 @@ public class userOrder implements Initializable {
     @FXML private Label totalSpendLabel;
     @FXML private Label pendingCountLabel;
     @FXML private Label shippedCountLabel;
+    @FXML private Label readyCountLabel;
     @FXML private Label deliveredCountLabel;
     @FXML private Label cancelledCountLabel;
     @FXML private Label ordersMsg;
+    @FXML private Button viewDetailsBtn;
+    @FXML private Button orderReceivedBtn;
     @FXML private TableView<UserOrderRow> ordersTable;
     @FXML private TableColumn<UserOrderRow, String> orderIdCol;
     @FXML private TableColumn<UserOrderRow, String> amountCol;
@@ -54,6 +60,7 @@ public class userOrder implements Initializable {
         userId = UserSession.getId();
         makeCircle(navLogo);
         setupTable();
+        setupSelection();
         loadOrders();
     }
 
@@ -88,13 +95,48 @@ public class userOrder implements Initializable {
 
                 Label badge = new Label(item);
                 badge.getStyleClass().add("status-badge");
-                badge.getStyleClass().add(statusClass(item));
+                badge.getStyleClass().add(OrderStatusUtil.statusCssClass(item));
                 setGraphic(badge);
                 setText(null);
             }
         });
 
         ordersTable.setPlaceholder(new Label("No orders found."));
+    }
+
+    private void setupSelection() {
+        if (orderReceivedBtn != null) {
+            orderReceivedBtn.setDisable(true);
+        }
+        if (viewDetailsBtn != null) {
+            viewDetailsBtn.setDisable(true);
+        }
+
+        ordersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldRow, newRow) -> {
+            boolean canReceive = newRow != null && OrderStatusUtil.isReadyToDeliver(newRow.getStatus());
+            if (orderReceivedBtn != null) {
+                orderReceivedBtn.setDisable(!canReceive);
+            }
+            if (viewDetailsBtn != null) {
+                viewDetailsBtn.setDisable(newRow == null);
+            }
+
+            if (newRow == null) {
+                if (ordersTable.getItems() != null && !ordersTable.getItems().isEmpty()) {
+                    ordersMsg.setText("Your latest order updates are shown below.");
+                }
+                return;
+            }
+
+            if (canReceive) {
+                ordersMsg.setText(String.format(
+                        "Order #%06d is ready to deliver. Click Order Received once you have your package.",
+                        newRow.getOrderId()
+                ));
+            } else {
+                ordersMsg.setText(String.format("Selected order #%06d.", newRow.getOrderId()));
+            }
+        });
     }
 
     private void loadOrders() {
@@ -110,6 +152,7 @@ public class userOrder implements Initializable {
         double totalSpend = 0.0;
         int pending = 0;
         int shipped = 0;
+        int readyToDeliver = 0;
         int delivered = 0;
         int cancelled = 0;
 
@@ -131,14 +174,15 @@ public class userOrder implements Initializable {
                     rows.add(new UserOrderRow(
                             rs.getInt("o_id"),
                             amount,
-                            status,
+                            OrderStatusUtil.normalizeDisplayStatus(status),
                             formatDate(rs.getString("created_at"))
                     ));
 
                     totalSpend += amount;
 
-                    String normalized = normalizeStatus(status);
+                    String normalized = OrderStatusUtil.normalizeKey(status);
                     if ("delivered".equals(normalized)) delivered++;
+                    else if ("ready_to_deliver".equals(normalized)) readyToDeliver++;
                     else if ("shipped".equals(normalized)) shipped++;
                     else if ("cancelled".equals(normalized)) cancelled++;
                     else pending++;
@@ -155,9 +199,16 @@ public class userOrder implements Initializable {
         totalSpendLabel.setText(formatCurrency(totalSpend));
         pendingCountLabel.setText(String.format("%,d", pending));
         shippedCountLabel.setText(String.format("%,d", shipped));
+        readyCountLabel.setText(String.format("%,d", readyToDeliver));
         deliveredCountLabel.setText(String.format("%,d", delivered));
         cancelledCountLabel.setText(String.format("%,d", cancelled));
         ordersMsg.setText(rows.isEmpty() ? "You have no orders yet." : "Your latest order updates are shown below.");
+        if (orderReceivedBtn != null) {
+            orderReceivedBtn.setDisable(true);
+        }
+        if (viewDetailsBtn != null) {
+            viewDetailsBtn.setDisable(ordersTable.getSelectionModel().getSelectedItem() == null);
+        }
     }
 
     private String formatCurrency(double value) {
@@ -181,28 +232,12 @@ public class userOrder implements Initializable {
         }
     }
 
-    private String statusClass(String status) {
-        String normalized = normalizeStatus(status);
-        if ("delivered".equals(normalized)) return "status-delivered";
-        if ("shipped".equals(normalized)) return "status-shipped";
-        if ("cancelled".equals(normalized)) return "status-cancelled";
-        return "status-pending";
-    }
-
-    private String normalizeStatus(String status) {
-        if (status == null) return "pending";
-        String s = status.toLowerCase(Locale.ENGLISH);
-        if (s.contains("deliver")) return "delivered";
-        if (s.contains("ship")) return "shipped";
-        if (s.contains("cancel")) return "cancelled";
-        return "pending";
-    }
-
     private void resetSummary() {
         totalOrdersLabel.setText("0");
         totalSpendLabel.setText(formatCurrency(0.0));
         pendingCountLabel.setText("0");
         shippedCountLabel.setText("0");
+        readyCountLabel.setText("0");
         deliveredCountLabel.setText("0");
         cancelledCountLabel.setText("0");
     }
@@ -213,6 +248,62 @@ public class userOrder implements Initializable {
         if (ordersTable.getItems() != null && !ordersTable.getItems().isEmpty()) {
             ordersMsg.setText("Order list refreshed.");
         }
+    }
+
+    @FXML
+    private void receiveOrderAction(ActionEvent event) {
+        UserOrderRow selected = ordersTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            ordersMsg.setText("Select an order first.");
+            return;
+        }
+
+        if (!OrderStatusUtil.isReadyToDeliver(selected.getStatus())) {
+            ordersMsg.setText("Only Ready to Deliver orders can be marked as received.");
+            return;
+        }
+
+        String sql = "UPDATE tbl_orders SET status=? "
+                + "WHERE o_id=? AND u_id=? AND LOWER(COALESCE(status,'')) = LOWER(?)";
+
+        try (Connection conn = config.connectDB();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, OrderStatusUtil.STATUS_DELIVERED);
+            ps.setInt(2, selected.getOrderId());
+            ps.setInt(3, userId);
+            ps.setString(4, OrderStatusUtil.STATUS_READY_TO_DELIVER);
+
+            int updated = ps.executeUpdate();
+            if (updated <= 0) {
+                ordersMsg.setText("This order could not be marked as received. Please refresh and try again.");
+                return;
+            }
+
+            loadOrders();
+            ordersMsg.setText(String.format(
+                    "Order #%06d marked as Delivered. Thank you for confirming receipt.",
+                    selected.getOrderId()
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+            ordersMsg.setText("Failed to update order receipt.");
+        }
+    }
+
+    @FXML
+    private void viewOrderDetailsAction(ActionEvent event) throws IOException {
+        UserOrderRow selected = ordersTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            ordersMsg.setText("Select an order first.");
+            return;
+        }
+
+        OrderSuccessSession.setLastOrderId(selected.getOrderId());
+        Parent root = FXMLLoader.load(getClass().getResource("/UserFXML/userOrderSuccess.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
 
     private void openPage(String fxml, MouseEvent event) throws IOException {
@@ -249,7 +340,7 @@ public class userOrder implements Initializable {
 
     @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
-        UserSession.clear();
+        SessionAuditUtil.logoutUserSession();
         openPage("/Main/Login.fxml", event);
     }
 }

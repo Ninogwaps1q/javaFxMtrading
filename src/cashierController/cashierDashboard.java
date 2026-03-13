@@ -2,6 +2,8 @@ package cashierController;
 
 import AdminController.AdminSession;
 import Table.OrderRow;
+import config.OrderStatusUtil;
+import config.SessionAuditUtil;
 import config.config;
 import java.io.IOException;
 import java.net.URL;
@@ -105,7 +107,7 @@ public class cashierDashboard implements Initializable {
 
                 Label badge = new Label(item);
                 badge.getStyleClass().add("status-badge");
-                badge.getStyleClass().add(statusClass(item));
+                badge.getStyleClass().add(OrderStatusUtil.statusCssClass(item));
                 setGraphic(badge);
                 setText(null);
             }
@@ -127,8 +129,9 @@ public class cashierDashboard implements Initializable {
 
         int deliveredOrders = queryInt(
                 "SELECT COUNT(*) FROM tbl_orders "
-                + "WHERE LOWER(COALESCE(status,'')) LIKE '%deliver%' "
+                + "WHERE LOWER(COALESCE(status,'')) = LOWER(?) "
                 + "AND LOWER(COALESCE(handled_by_email,'')) = LOWER(?)",
+                OrderStatusUtil.STATUS_DELIVERED,
                 cashierEmail
         );
 
@@ -142,15 +145,17 @@ public class cashierDashboard implements Initializable {
                 "SELECT COALESCE(SUM(oi.qty), 0) "
                 + "FROM tbl_order_items oi "
                 + "JOIN tbl_orders o ON o.o_id = oi.o_id "
-                + "WHERE LOWER(COALESCE(o.status,'')) LIKE '%deliver%' "
+                + "WHERE LOWER(COALESCE(o.status,'')) = LOWER(?) "
                 + "AND LOWER(COALESCE(o.handled_by_email,'')) = LOWER(?)",
+                OrderStatusUtil.STATUS_DELIVERED,
                 cashierEmail
         );
 
         double totalRevenue = queryDouble(
                 "SELECT COALESCE(SUM(total), 0) FROM tbl_orders "
-                + "WHERE LOWER(COALESCE(status,'')) LIKE '%deliver%' "
+                + "WHERE LOWER(COALESCE(status,'')) = LOWER(?) "
                 + "AND LOWER(COALESCE(handled_by_email,'')) = LOWER(?)",
+                OrderStatusUtil.STATUS_DELIVERED,
                 cashierEmail
         );
 
@@ -186,7 +191,7 @@ public class cashierDashboard implements Initializable {
                             rs.getInt("o_id"),
                             rs.getString("customer"),
                             rs.getDouble("total"),
-                            rs.getString("status"),
+                            OrderStatusUtil.normalizeDisplayStatus(rs.getString("status")),
                             formatDate(rs.getString("display_date"))
                     ));
                 }
@@ -212,11 +217,27 @@ public class cashierDashboard implements Initializable {
         return 0;
     }
 
-    private double queryDouble(String sql, String value) {
+    private int queryInt(String sql, String firstValue, String secondValue) {
         try (Connection conn = config.connectDB();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, value);
+            ps.setString(1, firstValue);
+            ps.setString(2, secondValue);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private double queryDouble(String sql, String firstValue, String secondValue) {
+        try (Connection conn = config.connectDB();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, firstValue);
+            ps.setString(2, secondValue);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getDouble(1);
             }
@@ -296,14 +317,6 @@ public class cashierDashboard implements Initializable {
         }
     }
 
-    private String statusClass(String status) {
-        String s = status.toLowerCase(Locale.ENGLISH);
-        if (s.contains("deliver")) return "status-delivered";
-        if (s.contains("ship")) return "status-shipped";
-        if (s.contains("cancel")) return "status-cancelled";
-        return "status-pending";
-    }
-
     @FXML
     private void dashboardButtonAction(ActionEvent event) throws IOException {
         openScene((Node) event.getSource(), "/CashierFXML/CashierDashboard.fxml");
@@ -320,8 +333,13 @@ public class cashierDashboard implements Initializable {
     }
 
     @FXML
+    private void logsButtonAction(ActionEvent event) throws IOException {
+        openScene((Node) event.getSource(), "/CashierFXML/CashierLogs.fxml");
+    }
+
+    @FXML
     private void logoutButtonAction(ActionEvent event) throws IOException {
-        AdminSession.clear();
+        SessionAuditUtil.logoutAdminSession();
         openScene((Node) event.getSource(), "/Main/Login.fxml");
     }
 

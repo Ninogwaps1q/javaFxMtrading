@@ -247,6 +247,11 @@
     -fx-text-fill: white;
 }
 
+.status-ready {
+    -fx-background-color: #0891b2;
+    -fx-text-fill: white;
+}
+
 .status-shipped {
     -fx-background-color: #2563eb;
     -fx-text-fill: white;

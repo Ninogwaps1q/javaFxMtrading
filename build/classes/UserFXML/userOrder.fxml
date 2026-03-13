@@ -50,7 +50,7 @@
                         <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label styleClass="orders-title" text="Track Your Orders" />
-                                <Label styleClass="orders-subtitle" text="Check order progress from pending to delivered." />
+                                <Label styleClass="orders-subtitle" text="Check order progress from pending to ready for delivery and delivered." />
                                 <Label fx:id="ordersMsg" styleClass="orders-message" text="" />
                             </children>
                         </VBox>
@@ -80,6 +80,12 @@
                                 <Label fx:id="shippedCountLabel" styleClass="orders-stat-value" text="0" />
                             </children>
                         </VBox>
+                        <VBox spacing="4.0" styleClass="orders-stat-card orders-stat-ready" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="orders-stat-label" text="Ready To Deliver" />
+                                <Label fx:id="readyCountLabel" styleClass="orders-stat-value" text="0" />
+                            </children>
+                        </VBox>
                         <VBox spacing="4.0" styleClass="orders-stat-card orders-stat-delivered" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label styleClass="orders-stat-label" text="Delivered" />
@@ -97,10 +103,12 @@
 
                 <VBox spacing="10.0" styleClass="orders-table-wrap surface" VBox.vgrow="ALWAYS">
                     <children>
-                        <HBox alignment="CENTER_LEFT">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
                                 <Label styleClass="page-title" text="Order History" />
                                 <Region HBox.hgrow="ALWAYS" />
+                                <Button fx:id="viewDetailsBtn" disable="true" onAction="#viewOrderDetailsAction" styleClass="btn-secondary" text="View Details" />
+                                <Button fx:id="orderReceivedBtn" disable="true" onAction="#receiveOrderAction" styleClass="btn-primary" text="Order Received" />
                                 <Label styleClass="total-label" text="Latest purchases first" />
                             </children>
                         </HBox>

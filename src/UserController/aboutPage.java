@@ -1,5 +1,6 @@
 package UserController;
 
+import config.SessionAuditUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -76,7 +77,7 @@ public class aboutPage implements Initializable {
 
     @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
-        UserSession.clear();
+        SessionAuditUtil.logoutUserSession();
         openPage("/Main/Login.fxml", event);
     }
 }

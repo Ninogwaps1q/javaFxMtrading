@@ -98,6 +98,11 @@
     -fx-text-fill: white;
 }
 
+.status-ready {
+    -fx-background-color: #0891b2;
+    -fx-text-fill: white;
+}
+
 .status-shipped {
     -fx-background-color: #2563eb;
     -fx-text-fill: white;
@@ -109,6 +114,21 @@
 }
 
 .status-cancelled {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+}
+
+.status-in-stock {
+    -fx-background-color: #15803d;
+    -fx-text-fill: white;
+}
+
+.status-low-stock {
+    -fx-background-color: #ca8a04;
+    -fx-text-fill: white;
+}
+
+.status-out-stock {
     -fx-background-color: #dc2626;
     -fx-text-fill: white;
 }

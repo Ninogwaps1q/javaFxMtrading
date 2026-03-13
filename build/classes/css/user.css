@@ -362,6 +362,10 @@
     -fx-background-color: rgba(37, 99, 235, 0.12);
 }
 
+.orders-stat-ready {
+    -fx-background-color: rgba(8, 145, 178, 0.12);
+}
+
 .orders-stat-delivered {
     -fx-background-color: rgba(21, 128, 61, 0.12);
 }
@@ -474,6 +478,11 @@
     -fx-text-fill: white;
 }
 
+.status-ready {
+    -fx-background-color: #0891b2;
+    -fx-text-fill: white;
+}
+
 .status-shipped {
     -fx-background-color: #2563eb;
     -fx-text-fill: white;
@@ -556,9 +565,60 @@
     -fx-text-fill: rgba(15, 23, 42, 0.86);
 }
 
+.details-desc-box {
+    -fx-padding: 12;
+    -fx-background-color: rgba(15, 23, 42, 0.03);
+    -fx-border-color: rgba(15, 23, 42, 0.10);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+}
+
 .details-qty-value {
     -fx-font-weight: 900;
     -fx-font-size: 14px;
+}
+
+.details-review-summary {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f766e;
+}
+
+.details-review-list {
+    -fx-spacing: 10;
+}
+
+.details-review-card {
+    -fx-padding: 12;
+    -fx-background-color: rgba(15, 23, 42, 0.03);
+    -fx-border-color: rgba(15, 23, 42, 0.08);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.details-reviewer {
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.details-review-rating {
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #d97706;
+}
+
+.details-review-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(15, 23, 42, 0.84);
+}
+
+.details-review-meta {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -app-muted;
 }
 
 /* =========================================================
@@ -639,6 +699,34 @@
     -fx-font-size: 13px;
     -fx-font-weight: 900;
     -fx-text-fill: -app-primary;
+}
+
+.review-box {
+    -fx-padding: 10 0 0 0;
+    -fx-border-color: rgba(15, 23, 42, 0.08) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.review-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -app-text;
+}
+
+.review-saved-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #d97706;
+}
+
+.review-copy {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(15, 23, 42, 0.84);
+}
+
+.review-input {
+    -fx-pref-row-count: 3;
 }
 
 /* =========================================================

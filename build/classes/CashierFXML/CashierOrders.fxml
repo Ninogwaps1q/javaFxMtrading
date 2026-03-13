@@ -40,7 +40,17 @@
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20">
                            <image>
-                              <Image url="@../image/icons8-sales-24.png" />
+                              <Image url="@../image/icons8-add-shopping-cart-32.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
+                  <Button maxWidth="Infinity" onAction="#logsButtonAction" styleClass="nav-btn" text="Logs">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-log-24.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -75,7 +85,7 @@
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
                   <Label styleClass="muted-text" text="Set Status:" />
-                  <ComboBox fx:id="statusTypeCombo" prefWidth="160.0" promptText="Status Type" />
+                  <ComboBox fx:id="statusTypeCombo" prefWidth="190.0" promptText="Status Type" />
                   <Button fx:id="updateStatusBtn" onAction="#updateOrderStatusAction" styleClass="btn-primary update-status-btn" text="Update Status" />
                   <Button fx:id="printOrderBtn" onAction="#printOrderDetailsAction" styleClass="btn-secondary" text="Print Order Details" />
                   <Region HBox.hgrow="ALWAYS" />
@@ -86,9 +96,9 @@
             <TableView fx:id="ordersTable" prefHeight="51.0" prefWidth="740.0" VBox.vgrow="ALWAYS">
                <columns>
                   <TableColumn fx:id="orderIdCol" prefWidth="75.0" text="Order ID" />
-                  <TableColumn fx:id="customerCol" prefWidth="330.0" text="Customer" />
+                  <TableColumn fx:id="customerCol" prefWidth="277.0" text="Customer" />
                   <TableColumn fx:id="amountCol" prefWidth="102.0" text="Amount" />
-                  <TableColumn fx:id="statusCol" prefWidth="92.0" text="Status" />
+                  <TableColumn fx:id="statusCol" prefWidth="145.0" text="Status" />
                   <TableColumn fx:id="dateCol" prefWidth="137.0" text="Date" />
                </columns>
             </TableView>

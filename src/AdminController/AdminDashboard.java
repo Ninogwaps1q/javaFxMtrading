@@ -1,6 +1,8 @@
 package AdminController;
 
 import Table.OrderRow;
+import config.OrderStatusUtil;
+import config.SessionAuditUtil;
 import config.config;
 import java.io.IOException;
 import java.net.URL;
@@ -108,7 +110,7 @@ public class AdminDashboard implements Initializable {
 
                 Label badge = new Label(item);
                 badge.getStyleClass().add("status-badge");
-                badge.getStyleClass().add(statusClass(item));
+                badge.getStyleClass().add(OrderStatusUtil.statusCssClass(item));
                 setGraphic(badge);
                 setText(null);
             }
@@ -130,7 +132,11 @@ public class AdminDashboard implements Initializable {
         int totalProducts = queryInt("SELECT COUNT(*) FROM tbl_products");
         int totalOrders = queryInt("SELECT COUNT(*) FROM tbl_orders");
         int totalCustomers = queryInt("SELECT COUNT(*) FROM tbl_acc WHERE LOWER(u_role) = 'user'");
-        double totalRevenue = queryDouble("SELECT COALESCE(SUM(total), 0) FROM tbl_orders");
+        double totalRevenue = queryDouble(
+                "SELECT COALESCE(SUM(total), 0) FROM tbl_orders "
+                + "WHERE LOWER(COALESCE(status,'')) = LOWER(?)",
+                OrderStatusUtil.STATUS_DELIVERED
+        );
 
         totalProductsLabel.setText(String.format("%,d", totalProducts));
         totalOrdersLabel.setText(String.format("%,d", totalOrders));
@@ -155,7 +161,7 @@ public class AdminDashboard implements Initializable {
                         rs.getInt("o_id"),
                         rs.getString("customer"),
                         rs.getDouble("total"),
-                        rs.getString("status"),
+                        OrderStatusUtil.normalizeDisplayStatus(rs.getString("status")),
                         formatDate(rs.getString("created_at"))
                 ));
             }
@@ -190,6 +196,20 @@ public class AdminDashboard implements Initializable {
         return 0.0;
     }
 
+    private double queryDouble(String sql, String value) {
+        try (Connection conn = config.connectDB();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, value);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
     private String formatCurrency(double value) {
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("en", "PH"));
         String currency = format.format(value);
@@ -216,14 +236,6 @@ public class AdminDashboard implements Initializable {
         }
     }
 
-    private String statusClass(String status) {
-        String s = status.toLowerCase(Locale.ENGLISH);
-        if (s.contains("deliver")) return "status-delivered";
-        if (s.contains("ship")) return "status-shipped";
-        if (s.contains("cancel")) return "status-cancelled";
-        return "status-pending";
-    }
-
     @FXML
     private void orderButtonAction(ActionEvent event) throws IOException {
         openScene(event, "/AdminFXML/adminSale.fxml");
@@ -235,9 +247,18 @@ public class AdminDashboard implements Initializable {
     }
 
     @FXML
-    private void logoutButtonAction(ActionEvent event) throws IOException {
-        AdminSession.clear();
+    private void inventoryButtonAction(ActionEvent event) throws IOException {
+        openScene(event, "/AdminFXML/adminInventory.fxml");
+    }
 
+    @FXML
+    private void logsButtonAction(ActionEvent event) throws IOException {
+        openScene(event, "/AdminFXML/adminLogs.fxml");
+    }
+
+    @FXML
+    private void logoutButtonAction(ActionEvent event) throws IOException {
+        SessionAuditUtil.logoutAdminSession();
         openScene(event, "/Main/Login.fxml");
     }
 

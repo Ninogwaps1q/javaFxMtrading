@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminInventory">
+
+   <children>
+      <VBox fx:id="panel" alignment="TOP_CENTER" fillWidth="true" prefWidth="220.0" spacing="12.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fx:id="logo" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/image6.jpg" />
+               </image>
+            </ImageView>
+
+            <Label fx:id="textPanel" alignment="CENTER" maxWidth="Infinity" text="Admin Panel" />
+
+            <VBox maxWidth="Infinity" spacing="6.0">
+               <children>
+                  <Button fx:id="dashboard" maxWidth="Infinity" onAction="#dashboardButtonAction" styleClass="nav-btn" text="Dashboard">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-dashboard-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
+                  <Button fx:id="productBtn" maxWidth="Infinity" onAction="#productButtonAction" styleClass="nav-btn" text="Products">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-products-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
+                  <Button maxWidth="Infinity" onAction="#inventoryButtonAction" styleClass="nav-btn" text="Inventory">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-inventory-30.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
+                  <Button fx:id="salesBtn" maxWidth="Infinity" onMouseClicked="#saleHandleBtn" styleClass="nav-btn" text="Sales">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-sales-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
+                  <Button fx:id="userBtn" maxWidth="Infinity" onAction="#userButtonAction" styleClass="nav-btn" text="Users">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-user-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+
+                  <Button maxWidth="Infinity" onAction="#logsButtonAction" styleClass="nav-btn" text="Logs">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                           <image>
+                              <Image url="@../image/icons8-log-24.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <Button fx:id="logoutBtn" maxWidth="Infinity" onAction="#logoutButtonAction" styleClass="nav-btn1" text="Logout">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20">
+                     <image>
+                        <Image url="@../image/icons8-logout-24.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </VBox>
+
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" prefHeight="560.0" prefWidth="740.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <content>
+            <VBox spacing="14.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <Label styleClass="page-title" text="Inventory Stock Adjustment" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="inventoryMetaLabel" styleClass="muted-text" text="Showing 0 of 0 products" />
+                        <Button onAction="#refreshInventoryAction" styleClass="btn-secondary" text="Refresh" />
+                     </children>
+                  </HBox>
+
+                  <Label styleClass="muted-text" text="Use this page only for stock in and stock out adjustments. Every adjustment is recorded in tbl_inventory." wrapText="true" />
+
+                  <HBox spacing="12.0">
+                     <children>
+                        <VBox maxWidth="Infinity" spacing="8.0" styleClass="surface summary-card" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="summary-title" text="Adjusted Today" />
+                              <Label fx:id="totalAdjustedTodayLabel" styleClass="summary-value" text="0" />
+                           </children>
+                        </VBox>
+
+                        <VBox maxWidth="Infinity" spacing="8.0" styleClass="surface summary-card" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="summary-title" text="Low Stock" />
+                              <Label fx:id="lowStockCountLabel" styleClass="summary-value" text="0" />
+                           </children>
+                        </VBox>
+
+                        <VBox maxWidth="Infinity" spacing="8.0" styleClass="surface summary-card" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="summary-title" text="Out Of Stock" />
+                              <Label fx:id="outOfStockCountLabel" styleClass="summary-value" text="0" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <HBox spacing="14.0">
+                     <children>
+                        <VBox spacing="12.0" styleClass="surface dashboard-card" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <Label styleClass="section-title" text="Products" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="searchField" promptText="Search product or type" />
+                                 </children>
+                              </HBox>
+
+                              <TableView fx:id="productsTable" prefHeight="270.0" prefWidth="430.0">
+                                 <columns>
+                                    <TableColumn fx:id="productIdCol" prefWidth="58.0" text="ID" />
+                                    <TableColumn fx:id="productNameCol" prefWidth="170.0" text="Product" />
+                                    <TableColumn fx:id="productTypeCol" prefWidth="100.0" text="Type" />
+                                    <TableColumn fx:id="productStockCol" prefWidth="70.0" text="Stock" />
+                                    <TableColumn fx:id="productStatusCol" prefWidth="120.0" text="Status" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+
+                        <VBox prefWidth="280.0" spacing="12.0" styleClass="surface dashboard-card">
+                           <children>
+                              <Label styleClass="section-title" text="Adjust Stock" />
+                              <Label fx:id="selectedProductLabel" styleClass="muted-text" text="Selected Product: None" wrapText="true" />
+                              <Label fx:id="currentStockLabel" styleClass="muted-text" text="Current Stock: -" />
+
+                              <ComboBox fx:id="adjustmentTypeCombo" promptText="Adjustment Type" />
+                              <TextField fx:id="quantityField" promptText="Quantity" />
+                              <TextArea fx:id="noteField" prefHeight="110.0" promptText="Note (optional)" wrapText="true" />
+
+                              <HBox spacing="8.0">
+                                 <children>
+                                    <Button maxWidth="Infinity" onAction="#applyAdjustmentAction" styleClass="btn-primary" text="Save Adjustment" HBox.hgrow="ALWAYS" />
+                                    <Button maxWidth="Infinity" onAction="#clearAdjustmentAction" styleClass="btn-secondary" text="Clear" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+
+                              <Label fx:id="statusMessageLabel" styleClass="muted-text" text="" wrapText="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <VBox spacing="12.0" styleClass="surface dashboard-card">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label styleClass="section-title" text="Adjustment History" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="historyMetaLabel" styleClass="muted-text" text="Total Adjustments: 0" />
+                           </children>
+                        </HBox>
+
+                        <TableView fx:id="historyTable" prefHeight="280.0" prefWidth="740.0">
+                           <columns>
+                              <TableColumn fx:id="historyDateCol" prefWidth="145.0" text="Date" />
+                              <TableColumn fx:id="historyProductCol" prefWidth="165.0" text="Product" />
+                              <TableColumn fx:id="historyTypeCol" prefWidth="110.0" text="Type" />
+                              <TableColumn fx:id="historyQtyCol" prefWidth="70.0" text="Qty" />
+                              <TableColumn fx:id="historyStockCol" prefWidth="105.0" text="Stock" />
+                              <TableColumn fx:id="historyByCol" prefWidth="120.0" text="Adjusted By" />
+                              <TableColumn fx:id="historyNoteCol" prefWidth="155.0" text="Note" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>

@@ -21,6 +21,9 @@ public class config {
         try {
             Class.forName("org.sqlite.JDBC");
             con = DriverManager.getConnection("jdbc:sqlite:data.db"); // <-- your db file
+            try (Statement stmt = con.createStatement()) {
+                stmt.execute("PRAGMA busy_timeout = 5000");
+            }
             System.out.println("Connection Successful");
         } catch (Exception e) {
             System.out.println("Connection Failed: " + e);
@@ -32,9 +35,7 @@ public class config {
         try (Connection conn = connectDB();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            for (int i = 0; i < values.length; i++) {
-                pstmt.setObject(i + 1, values[i]);
-            }
+            bindParameters(pstmt, values);
 
             pstmt.executeUpdate();
             System.out.println("Record added successfully!");
@@ -43,9 +44,29 @@ public class config {
         }
     }
 
+    public static int deleteRecord(String sql, Object... values) {
+        try (Connection conn = connectDB()) {
+            if (conn == null) return 0;
+            return deleteRecord(conn, sql, values);
+        } catch (SQLException e) {
+            System.out.println("Error deleting record: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public static int deleteRecord(Connection conn, String sql, Object... values) throws SQLException {
+        if (conn == null) return 0;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            bindParameters(pstmt, values);
+            return pstmt.executeUpdate();
+        }
+    }
+
     // UPDATED LOGIN: saves USER session for User, AdminSession for Admin/Cashier
     public String login(String loginInput, String pass) {
         String role = null;
+        Connection conn = null;
 
         String sql = "SELECT u_id, u_name, u_email, u_role, u_status " +
                      "FROM tbl_acc " +
@@ -53,46 +74,73 @@ public class config {
 
         String hash = hashPassword(pass);
 
-        try (Connection conn = config.connectDB();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try {
+            conn = config.connectDB();
+            if (conn == null) return null;
 
-            pstmt.setString(1, loginInput);
-            pstmt.setString(2, loginInput);
-            pstmt.setString(3, hash);
+            conn.setAutoCommit(false);
+            AuditLogService.ensureAuditLogTable(conn);
 
-            try (ResultSet rs = pstmt.executeQuery()) {
+            int id;
+            String name;
+            String email;
 
-                if (!rs.next()) {
-                    System.out.println("Invalid credentials.");
-                    return null;
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, loginInput);
+                pstmt.setString(2, loginInput);
+                pstmt.setString(3, hash);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+
+                    if (!rs.next()) {
+                        conn.rollback();
+                        System.out.println("Invalid credentials.");
+                        return null;
+                    }
+
+                    String status = rs.getString("u_status");
+                    if (!"Approved".equalsIgnoreCase(status)) {
+                        conn.rollback();
+                        System.out.println("Account pending approval.");
+                        return null;
+                    }
+
+                    id = rs.getInt("u_id");
+                    name = rs.getString("u_name");
+                    email = rs.getString("u_email");
+                    role = rs.getString("u_role");
                 }
-
-                String status = rs.getString("u_status");
-                if (!"Approved".equalsIgnoreCase(status)) {
-                    System.out.println("Account pending approval.");
-                    return null;
-                }
-
-                int id = rs.getInt("u_id");
-                String name = rs.getString("u_name");
-                String email = rs.getString("u_email");
-                role = rs.getString("u_role");
-
-                // Clear old sessions first (avoid mix)
-                UserSession.clear();
-                AdminSession.clear();
-
-                if ("User".equalsIgnoreCase(role)) {
-                    UserSession.set(id, name, email);
-                } else {
-                    AdminSession.setAdmin(name, email, role);
-                }
-
-                System.out.println("Login successful: " + name + " | " + email + " | " + role);
             }
 
+            SessionAuditUtil.closeAnyActiveSessions(conn);
+            int loginLogId = AuditLogService.recordLogin(conn, id, name, email, role);
+            conn.commit();
+
+            if ("User".equalsIgnoreCase(role)) {
+                UserSession.set(id, name, email, loginLogId);
+            } else {
+                AdminSession.setAdmin(id, name, email, role, loginLogId);
+            }
+
+            System.out.println("Login successful: " + name + " | " + email + " | " + role);
+
         } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    System.out.println("Login rollback error: " + rollbackEx.getMessage());
+                }
+            }
             System.out.println("Login error: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException closeEx) {
+                    System.out.println("Connection close error: " + closeEx.getMessage());
+                }
+            }
         }
 
         return role;
@@ -102,9 +150,7 @@ public class config {
         try (Connection conn = connectDB();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            for (int i = 0; i < values.length; i++) {
-                pstmt.setObject(i + 1, values[i]);
-            }
+            bindParameters(pstmt, values);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 return rs.next();
@@ -141,7 +187,7 @@ public class config {
     }
 
     // ⚠️ Security note: consider moving these to env later
-    public void sendEmail(String to, String subject, String body) {
+    public boolean sendEmail(String to, String subject, String body) {
         final String from = "jaycavalidamanabat@gmail.com";
         final String password = "wvdb zgnn sgcb xejz";
 
@@ -164,7 +210,11 @@ public class config {
             message.setSubject(subject);
             message.setText(body);
             Transport.send(message);
-        } catch (Exception e) { e.printStackTrace(); }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public int generateResetCode() {
@@ -179,5 +229,11 @@ public class config {
                 "If you did not request this, ignore this email.\n\n" +
                 "Melynal Trading System";
         sendEmail(email, subject, body);
+    }
+
+    private static void bindParameters(PreparedStatement pstmt, Object... values) throws SQLException {
+        for (int i = 0; i < values.length; i++) {
+            pstmt.setObject(i + 1, values[i]);
+        }
     }
 }

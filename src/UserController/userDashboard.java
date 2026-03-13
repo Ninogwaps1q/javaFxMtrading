@@ -1,6 +1,7 @@
 
 package UserController;
 
+import config.SessionAuditUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -83,7 +84,7 @@ public class userDashboard implements Initializable {
 
     @FXML
     private void handleLogoutBtn(MouseEvent event) throws IOException {
-        UserSession.clear();
+        SessionAuditUtil.logoutUserSession();
         Parent root = FXMLLoader.load(getClass().getResource("/Main/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 1000, 600));

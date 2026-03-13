@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminLogs">
+    <children>
+        <VBox fx:id="panel" alignment="TOP_CENTER" fillWidth="true" prefWidth="220.0" spacing="12.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <ImageView fx:id="logo" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../image/image6.jpg" />
+                    </image>
+                </ImageView>
+
+                <Label fx:id="textPanel" alignment="CENTER" maxWidth="Infinity" text="Admin Panel" />
+
+                <VBox maxWidth="Infinity" spacing="6.0">
+                    <children>
+                        <Button fx:id="dashboard" maxWidth="Infinity" onAction="#dashboardButtonAction" styleClass="nav-btn" text="Dashboard">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20">
+                                    <image>
+                                        <Image url="@../image/icons8-dashboard-24.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                        <Button fx:id="productBtn" maxWidth="Infinity" onAction="#productButtonAction" styleClass="nav-btn" text="Products">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20">
+                                    <image>
+                                        <Image url="@../image/icons8-products-24.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                        <Button maxWidth="Infinity" onAction="#inventoryButtonAction" styleClass="nav-btn" text="Inventory">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20">
+                                    <image>
+                                        <Image url="@../image/icons8-inventory-30.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                        <Button fx:id="salesBtn" maxWidth="Infinity" onAction="#salesButtonAction" styleClass="nav-btn" text="Sales">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20">
+                                    <image>
+                                        <Image url="@../image/icons8-sales-24.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                        <Button fx:id="userBtn" maxWidth="Infinity" onAction="#userButtonAction" styleClass="nav-btn" text="Users">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20">
+                                    <image>
+                                        <Image url="@../image/icons8-user-24.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                        <Button maxWidth="Infinity" onAction="#logsButtonAction" styleClass="nav-btn" text="Logs">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20">
+                                    <image>
+                                        <Image url="@../image/icons8-log-24.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS" />
+
+                <Button fx:id="logoutBtn" maxWidth="Infinity" onAction="#logoutButtonAction" styleClass="nav-btn1" text="Logout">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20">
+                            <image>
+                                <Image url="@../image/icons8-logout-24.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </VBox>
+
+        <VBox spacing="12.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label styleClass="page-title" text="Login Logs" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button onAction="#refreshLogsAction" styleClass="btn-secondary" text="Refresh" />
+                        <Label fx:id="totalLogsMetaLabel" styleClass="muted-text" text="Total Sessions: 0 | Active: 0" />
+                    </children>
+                </HBox>
+
+                <TableView fx:id="logsTable" prefHeight="520.0" prefWidth="740.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="nameCol" prefWidth="150.0" text="Name" />
+                        <TableColumn fx:id="emailCol" prefWidth="185.0" text="Email" />
+                        <TableColumn fx:id="roleCol" prefWidth="90.0" text="Role" />
+                        <TableColumn fx:id="loginAtCol" prefWidth="150.0" text="Login Time" />
+                        <TableColumn fx:id="logoutAtCol" prefWidth="150.0" text="Logout Time" />
+                        <TableColumn fx:id="statusCol" prefWidth="110.0" text="Status" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
