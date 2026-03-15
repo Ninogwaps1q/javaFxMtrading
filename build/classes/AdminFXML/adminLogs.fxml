@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminLogs">
+<AnchorPane prefHeight="600.0" prefWidth="1300.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AdminController.adminLogs">
     <children>
         <VBox fx:id="panel" alignment="TOP_CENTER" fillWidth="true" prefWidth="220.0" spacing="12.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -119,7 +119,7 @@
                         <TableColumn fx:id="roleCol" prefWidth="90.0" text="Role" />
                         <TableColumn fx:id="loginAtCol" prefWidth="150.0" text="Login Time" />
                         <TableColumn fx:id="logoutAtCol" prefWidth="150.0" text="Logout Time" />
-                        <TableColumn fx:id="statusCol" prefWidth="110.0" text="Status" />
+                        <TableColumn fx:id="statusCol" prefWidth="180.0" text="Status" />
                     </columns>
                 </TableView>
             </children>

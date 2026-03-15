@@ -88,7 +88,7 @@
                   <TableColumn fx:id="emailCol" prefWidth="220.0" text="Email" />
                   <TableColumn fx:id="loginAtCol" prefWidth="150.0" text="Login Time" />
                   <TableColumn fx:id="logoutAtCol" prefWidth="150.0" text="Logout Time" />
-                  <TableColumn fx:id="statusCol" prefWidth="115.0" text="Status" />
+                  <TableColumn fx:id="statusCol" prefWidth="140.0" text="Status" />
                </columns>
             </TableView>
          </children>

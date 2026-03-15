@@ -97,9 +97,9 @@
 }
 
 .status-badge {
-    -fx-padding: 4 9 4 9;
+    -fx-padding: 6 12 6 12;
     -fx-background-radius: 8;
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-font-weight: 900;
 }
 

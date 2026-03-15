@@ -66,6 +66,7 @@ public class adminUser implements Initializable {
 
         roleCombo.getItems().addAll("Admin", "User", "Cashier");
         statusCombo.getItems().addAll("Approved", "Pending");
+        configureContactFields(false);
 
         // Table columns mapping
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -137,6 +138,7 @@ public class adminUser implements Initializable {
 
         phoneField.setText(u.getPhone());
         addressField.setText(u.getAddress());
+        configureContactFields(true);
 
         imagePath = u.getImage();
         loadImageToView(imagePath);
@@ -193,7 +195,7 @@ public class adminUser implements Initializable {
         UserFormInput input = readValidatedUserForm(false);
         if (input == null) return;
 
-        String sql = "INSERT INTO tbl_acc(u_name,u_email,u_uname,u_role,u_status,u_image,u_phone,u_address) VALUES(?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO tbl_acc(u_name,u_email,u_uname,u_role,u_status,u_image) VALUES(?,?,?,?,?,?)";
 
         try (Connection conn = config.connectDB();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -204,8 +206,6 @@ public class adminUser implements Initializable {
             ps.setString(4, input.role);
             ps.setString(5, input.status);
             ps.setString(6, input.imagePath);
-            ps.setString(7, input.phone);
-            ps.setString(8, input.address);
 
             ps.executeUpdate();
             loadUsers();
@@ -293,6 +293,7 @@ public class adminUser implements Initializable {
         profileImage.setImage(null);
         imagePath = "";
         selectedId = 0;
+        configureContactFields(false);
     }
 
     private UserFormInput readValidatedUserForm(boolean isUpdate) {
@@ -301,14 +302,14 @@ public class adminUser implements Initializable {
         String name = safe(nameField.getText());
         String email = safe(emailField.getText()).toLowerCase(Locale.ENGLISH);
         String username = safe(usernameField.getText());
-        String phone = safe(phoneField.getText());
-        String address = safe(addressField.getText());
+        String phone = isUpdate ? safe(phoneField.getText()) : "";
+        String address = isUpdate ? safe(addressField.getText()) : "";
         String role = safe(roleCombo.getValue());
         String status = safe(statusCombo.getValue());
 
         if (name.isEmpty() || email.isEmpty() || username.isEmpty()
-                || phone.isEmpty() || address.isEmpty() || role.isEmpty() || status.isEmpty()) {
-            showValidationAlert("All fields except the image are required.");
+                || role.isEmpty() || status.isEmpty()) {
+            showValidationAlert("Name, email, username, role, and status are required.");
             return null;
         }
 
@@ -324,16 +325,6 @@ public class adminUser implements Initializable {
 
         if (!username.matches("^[A-Za-z0-9._-]{3,20}$")) {
             showValidationAlert("Username must be 3-20 characters and use only letters, numbers, dot, underscore, or dash.");
-            return null;
-        }
-
-        if (!phone.matches("^09\\d{9}$")) {
-            showValidationAlert("Phone number must be 11 digits and start with 09.");
-            return null;
-        }
-
-        if (address.length() < 5) {
-            showValidationAlert("Address must be at least 5 characters.");
             return null;
         }
 
@@ -354,6 +345,11 @@ public class adminUser implements Initializable {
         }
 
         return new UserFormInput(name, email, username, phone, address, role, status, imagePath);
+    }
+
+    private void configureContactFields(boolean isUpdateMode) {
+        phoneField.setDisable(!isUpdateMode);
+        addressField.setDisable(!isUpdateMode);
     }
 
     private boolean isValidGmailAddress(String email) {
