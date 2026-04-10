@@ -188,8 +188,8 @@ public class config {
 
     // ⚠️ Security note: consider moving these to env later
     public boolean sendEmail(String to, String subject, String body) {
-        final String from = "jaycavalidamanabat@gmail.com";
-        final String password = "wvdb zgnn sgcb xejz";
+        final String from = "ninojaycavalidamanabat@gmail.com";
+        final String password = "mxqs icsu xzox cgab";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

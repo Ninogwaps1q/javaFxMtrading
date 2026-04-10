@@ -38,12 +38,15 @@ public final class VoucherDataUtil {
                 + "minimum_order REAL NOT NULL DEFAULT 0, "
                 + "expires_at TEXT, "
                 + "is_active INTEGER NOT NULL DEFAULT 1, "
+                + "created_by TEXT NOT NULL DEFAULT '', "
                 + "created_at TEXT NOT NULL DEFAULT (datetime('now'))"
                 + ")";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.executeUpdate();
         }
+
+        addColumnIfMissing(conn, "tbl_vouchers", "created_by", "TEXT");
     }
 
     public static VoucherDiscount validateVoucher(String rawCode, double grossTotal) {
@@ -163,5 +166,28 @@ public final class VoucherDataUtil {
 
     private static double roundMoney(double value) {
         return Math.round(value * 100.0) / 100.0;
+    }
+
+    private static void addColumnIfMissing(Connection conn, String table, String column, String type) throws SQLException {
+        if (columnExists(conn, table, column)) return;
+
+        try (PreparedStatement ps = conn.prepareStatement(
+                "ALTER TABLE " + table + " ADD COLUMN " + column + " " + type)) {
+            ps.executeUpdate();
+        }
+    }
+
+    private static boolean columnExists(Connection conn, String table, String column) throws SQLException {
+        String sql = "PRAGMA table_info(" + table + ")";
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                if (column.equalsIgnoreCase(rs.getString("name"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

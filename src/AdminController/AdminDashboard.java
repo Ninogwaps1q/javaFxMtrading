@@ -110,6 +110,7 @@ public class AdminDashboard implements Initializable {
     @FXML private TableView<VoucherRow> vouchersTable;
     @FXML private TableColumn<VoucherRow, String> voucherCodeCol;
     @FXML private TableColumn<VoucherRow, String> voucherTypeCol;
+    @FXML private TableColumn<VoucherRow, String> voucherCreatedByCol;
     @FXML private TableColumn<VoucherRow, String> voucherValueCol;
     @FXML private TableColumn<VoucherRow, String> voucherMinOrderCol;
     @FXML private TableColumn<VoucherRow, String> voucherExpiryCol;
@@ -200,6 +201,8 @@ public class AdminDashboard implements Initializable {
                 new SimpleStringProperty(safeText(d.getValue().getCode())));
         voucherTypeCol.setCellValueFactory(d ->
                 new SimpleStringProperty(safeText(d.getValue().getDiscountType())));
+        voucherCreatedByCol.setCellValueFactory(d ->
+                new SimpleStringProperty(safeText(d.getValue().getCreatedBy())));
         voucherValueCol.setCellValueFactory(d ->
                 new SimpleStringProperty(formatVoucherValue(d.getValue().getDiscountType(), d.getValue().getDiscountValue())));
         voucherMinOrderCol.setCellValueFactory(d ->
@@ -411,7 +414,8 @@ public class AdminDashboard implements Initializable {
     private void loadVouchers() {
         ObservableList<VoucherRow> rows = FXCollections.observableArrayList();
         String sql = "SELECT voucher_id, code, discount_type, discount_value, minimum_order, "
-                + "COALESCE(expires_at, '') AS expires_at, COALESCE(is_active, 1) AS is_active "
+                + "COALESCE(expires_at, '') AS expires_at, COALESCE(created_by, '') AS created_by, "
+                + "COALESCE(is_active, 1) AS is_active "
                 + "FROM tbl_vouchers "
                 + "ORDER BY COALESCE(is_active, 1) DESC, datetime(COALESCE(created_at, datetime('now'))) DESC, voucher_id DESC";
 
@@ -430,7 +434,8 @@ public class AdminDashboard implements Initializable {
                             rs.getDouble("discount_value"),
                             rs.getDouble("minimum_order"),
                             rs.getString("expires_at"),
-                            rs.getInt("is_active") == 1 ? "Active" : "Inactive"
+                            rs.getInt("is_active") == 1 ? "Active" : "Inactive",
+                            rs.getString("created_by")
                     ));
                 }
             }
@@ -609,8 +614,13 @@ public class AdminDashboard implements Initializable {
             return;
         }
 
-        String sql = "INSERT INTO tbl_vouchers(code, discount_type, discount_value, minimum_order, expires_at, is_active) "
-                + "VALUES(?,?,?,?,?,?)";
+        String createdBy = AdminSession.getName();
+        if (createdBy == null || createdBy.trim().isEmpty()) {
+            createdBy = "Unknown";
+        }
+
+        String sql = "INSERT INTO tbl_vouchers(code, discount_type, discount_value, minimum_order, expires_at, is_active, created_by) "
+                + "VALUES(?,?,?,?,?,?,?)";
 
         try (Connection conn = config.connectDB()) {
             if (conn == null) {
@@ -626,6 +636,7 @@ public class AdminDashboard implements Initializable {
                 ps.setDouble(4, minimumOrder);
                 ps.setString(5, expiry);
                 ps.setInt(6, "Active".equalsIgnoreCase(active) ? 1 : 0);
+                ps.setString(7, createdBy);
                 ps.executeUpdate();
             }
 

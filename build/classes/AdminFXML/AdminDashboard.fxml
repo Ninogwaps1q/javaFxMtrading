@@ -345,6 +345,7 @@
                                                     <columns>
                                                         <TableColumn fx:id="voucherCodeCol" prefWidth="120.0" text="Code" />
                                                         <TableColumn fx:id="voucherTypeCol" prefWidth="120.0" text="Type" />
+                                                        <TableColumn fx:id="voucherCreatedByCol" prefWidth="140.0" text="Created By" />
                                                         <TableColumn fx:id="voucherValueCol" prefWidth="110.0" text="Value" />
                                                         <TableColumn fx:id="voucherMinOrderCol" prefWidth="110.0" text="Min Order" />
                                                         <TableColumn fx:id="voucherExpiryCol" prefWidth="120.0" text="Expiry" />
